@@ -432,6 +432,7 @@
             >
               <text>{{ index + 1 }}</text>
               <text v-if="isNumberAnswered(index)" class="tibiao-label">已答</text>
+              <text v-else-if="isNumberSkippedUnanswered(index)" class="tibiao-label tibiao-label-unanswered">未答</text>
             </view>
           </view>
         </scroll-view>
@@ -914,6 +915,10 @@ export default {
           }
         }
 
+        if (this.isNumberSkippedUnanswered(index)) {
+          return ['tibiao-unanswered']
+        }
+
         return classes
       }
     },
@@ -921,21 +926,26 @@ export default {
     isNumberAnswered () {
       return (index) => {
         const question = this.list[index]
-        if (!question || !question.kind) return false
+        return this.isQuestionAnswered(question)
+      }
+    },
+    // 是否为跳题后的未答题（只在考试模式标红显示）
+    isNumberSkippedUnanswered () {
+      return (index) => {
+        if (this.mode !== 'EXAM') return false
+        if (this.swiperIndex - 1 === index) return false
 
-        switch (question.kind) {
-          case 'JUDGE':
-          case 'SINGLE':
-          case 'MULTI':
-            // 客观题：选过答案（check）或已判分（is_right）
-            return !!(question.check || question.is_right)
-          case 'FILL':
-          case 'SHORT':
-            // 主观题：有填写内容
-            return !!question.user_answers
-          default:
-            return false
+        const question = this.list[index]
+        if (!question || !question.kind) return false
+        if (this.isQuestionAnswered(question)) return false
+
+        for (let i = index + 1; i < this.list.length; i++) {
+          if (this.isQuestionAnswered(this.list[i])) {
+            return true
+          }
         }
+
+        return false
       }
     },
     // 获取错题来源文本
@@ -952,6 +962,22 @@ export default {
     }
   },
   methods: {
+    // 判断该题是否已答
+    isQuestionAnswered (question) {
+      if (!question || !question.kind) return false
+
+      switch (question.kind) {
+        case 'JUDGE':
+        case 'SINGLE':
+        case 'MULTI':
+          return !!(question.check || question.is_right)
+        case 'FILL':
+        case 'SHORT':
+          return !!question.user_answers
+        default:
+          return false
+      }
+    },
     // 初始化模式配置
     initMode (reset = false) {
       switch (this.mode) {
@@ -2080,10 +2106,19 @@ page {
               color: #fff;
             }
 
+            &.tibiao-unanswered {
+              border-color: #ff4d4f;
+              color: #ff4d4f;
+            }
+
             .tibiao-label {
               margin-top: 6rpx;
               font-size: 20rpx;
               color: inherit;
+            }
+
+            .tibiao-label-unanswered {
+              color: #ff4d4f;
             }
           }
         }
