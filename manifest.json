@@ -81,6 +81,7 @@
     },
     /* SDK配置 */
     "quickapp" : {},
+	"sassImplementationName": "node-sass",
     /* 快应用特有相关 */
     "mp-weixin" : {
         "appid" : "wx32bbb23f48306846",

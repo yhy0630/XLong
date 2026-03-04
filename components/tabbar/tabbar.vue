@@ -18,36 +18,36 @@
 
 		<block v-if="style === 'simple'">
 			<view style="height: 120rpx;"></view>
-			<view class="disFix index-bottom radius20">
+			<view class="disFix index-bottom">
 				<navigator url="/pages/index/index" hover-class="none" open-type="reLaunch">
 					<image
-						:src="route == '/pages/index/index' ? '/static/tabbar/index1.png' : '/static/tabbar/index.png'">
+						:src="route == '/pages/index/index' ? '/static/tabbar/Home.png' : '/static/tabbar/Home1.png'">
 					</image>
 					<text :style="'color:' + (route == '/pages/index/index' ? '#5677fc' : '#9b9b9b')">首页</text>
 				</navigator>
 
 				<navigator url="/pages/paper/index" hover-class="none" open-type="reLaunch">
 					<image
-						:src="route == '/pages/paper/index' ? '/static/tabbar/kaoshi1.png' : '/static/tabbar/kaoshi.png'">
+						:src="route == '/pages/paper/index' ? '/static/tabbar/Icon (2).png' : '/static/tabbar/Icon (1).png'">
 					</image>
 					<text :style="'color:' + (route == '/pages/paper/index' ? '#5677fc' : '#9b9b9b')">模拟考试</text>
 				</navigator>
 
-				<navigator class="index-b-center" url="/pages/index/news-list" hover-class="none" open-type="reLaunch">
+				<navigator url="/pages/index/news-list" hover-class="none" open-type="reLaunch">
 					<image
-						:src="route == '/pages/index/news-list' ? '/static/tabbar/zixun1.png' : '/static/tabbar/zixun.png'">
+						:src="route == '/pages/index/news-list' ? '/static/tabbar/Icon (3).png' : '/static/tabbar/Icon.png'">
 					</image>
-					<text :style="'color:' + (route == '/pages/index/news-list' ? '#5677fc' : '#9b9b9b')">新闻动态</text>
+					<text :style="'color:' + (route == '/pages/index/news-list' ? '#5677fc' : '#9b9b9b')">培训课堂</text>
 				</navigator>
 
 				<navigator url="/pages/room/index" hover-class="none" open-type="reLaunch">
-					<image :src="route == '/pages/room/index' ? '/static/tabbar/tiku1.png' : '/static/tabbar/tiku.png'">
+					<image :src="route == '/pages/room/index' ? '/static/tabbar/Icon (2).png' : '/static/tabbar/Icon (1).png'">
 					</image>
 					<text :style="'color:' + (route == '/pages/room/index' ? '#5677fc' : '#9b9b9b')">考场列表</text>
 				</navigator>
 
 				<navigator url="/pages/user/user" hover-class="none" open-type="reLaunch">
-					<image :src="route == '/pages/user/user' ? '/static/tabbar/user1.png' : '/static/tabbar/user.png'">
+					<image :src="route == '/pages/user/user' ? '/static/tabbar/Profile1.png' : '/static/tabbar/Profile.png'">
 					</image>
 					<text :style="'color:' + (route == '/pages/user/user' ? '#5677fc' : '#9b9b9b')">我的</text>
 				</navigator>
@@ -81,9 +81,9 @@
 						path: '/pages/paper/index',
 					},
 					{
-						name: '新闻动态',
+						name: '培训课堂',
 						icon: 'tn-icon-inventory',
-						path: '/pages/index/news-list',
+						path: '',
 					},
 					{
 						name: '考场列表',
@@ -102,7 +102,7 @@
 			return {
 				navbar: false,
 				route: '',
-				style: 'glass',
+				style: 'simple',
 				page: null,
 				tabbarArray: [{
 						name: '首页',
@@ -115,9 +115,9 @@
 						path: '/pages/paper/index',
 					},
 					{
-						name: '新闻动态',
+						name: '培训课堂',
 						icon: 'tn-icon-inventory',
-						path: '/pages/index/news-list',
+						path: '',
 					},
 					{
 						name: '考场列表',
@@ -138,9 +138,8 @@
 			 * @param value
 			 */
 			theme(value) {
-				if (value && value != undefined) {
-					this.style = value
-				}
+				// 强制使用普通底部条样式
+				this.style = 'simple'
 			},
 			/**
 			 * 监听user
@@ -169,8 +168,11 @@
 			// tabbar风格
 			this.page = uni.getStorageSync('page')
 			if (this.page?.page_tabbar_style) {
-				this.style = this.page.page_tabbar_style
+				// 原来根据配置切换，现在统一使用普通底部条样式
+				// this.style = this.page.page_tabbar_style
 			}
+			// 统一设置为普通底部条样式
+			this.style = 'simple'
 			// console.log('tabbar style', this.style)
 
 			let tabbar = uni.getStorageSync('tabbar')
@@ -209,7 +211,7 @@
 		/* left: 0;
   bottom: 1;
   width: 100%; */
-		height: 90rpx;
+		height: 150rpx;
 		background: #ffffff;
 		box-shadow: 0 0 2px 0 rgba(134, 133, 133, 0.5);
 		font-size: 0;
@@ -218,8 +220,8 @@
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom); */
 
-		bottom: 30rpx;
-		width: 95%;
+		bottom: 0rpx;
+		width: 100%;
 		position: fixed;
 		margin: 0 auto;
 		left: 0;
@@ -258,28 +260,15 @@
 
 	.index-bottom image {
 		display: block;
-		width: 38rpx;
-		height: 38rpx;
+		width: 50rpx;
+		height: 50rpx;
 		margin: 14rpx auto 6rpx;
 	}
-
-	.index-b-center {
-		position: relative;
-		width: 90rpx;
-		height: 90rpx;
-		margin: -40rpx 0 0;
-	}
-
-	.index-bottom .index-b-center image {
-		width: 76rpx;
-		height: 76rpx;
-	}
-
 
 	/* 底部tabbar 毛玻璃风格 start*/
 	.footerfixed {
 		position: fixed;
-		// margin: 20rpx;
+		/* // margin: 20rpx; */
 		margin: 40rpx 30rpx;
 		width: 690rpx;
 		bottom: calc(env(safe-area-inset-bottom) / 2);
@@ -295,7 +284,7 @@
 		justify-content: space-between;
 		padding: 0;
 		height: calc(110rpx + env(safe-area-inset-bottom) / 2);
-		// padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+		/* padding-bottom: calc(env(safe-area-inset-bottom) / 2); */
 	}
 
 	.tabbar .action {

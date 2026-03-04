@@ -1,18 +1,11 @@
-<!-- 新闻 详情 -->
+<!-- 公告详情 -->
 <template>
 	<view class="container">
-		
-		<!-- #ifdef H5 -->
-		<!-- 顶部自定义导航 -->
-		<tn-nav-bar fixed :bottomShadow="false" backTitle=" ">
-			<view class="">
-				<text class="tn-text-lg">公告</text>
-				<text class="tn-text-xl tn-padding-left-sm tn-icon-group-circle"></text>
-			</view>
-		</tn-nav-bar>
-		<!-- #endif -->
 
-		<view>
+		<!-- 自定义顶部导航栏 -->
+		<topbar title="公告详情" />
+
+		<view class="content-wrapper">
 			<view style="background-color: #FFFFFF;padding: 30rpx 30rpx 30rpx 30rpx;">
 				<view class="titleBox text-xl text-black text-bold">{{newsData.name}}</view>
 				
@@ -53,13 +46,13 @@
 					前往
 				</button> -->
 				
-				<tn-button shape="round" backgroundColor="#5677fc" padding="30rpx 0" width="200rpx" shadow @click="handleBack()" fontBold plain>
+				<!-- <tn-button shape="round" backgroundColor="#5677fc" padding="30rpx 0" width="200rpx" shadow @click="handleBack()" fontBold plain>
 					<text class="primary-color">返回列表</text>
 				</tn-button>
 				
 				<tn-button shape="round" backgroundColor="#5677fc" padding="30rpx 0" width="200rpx" shadow @click="handleGo()" v-if="newsData && newsData.front_info" fontBold>
 					<text class="tn-color-white">点击前往</text>
-				</tn-button>
+				</tn-button> -->
 			</view>
 		</view>
 		<view class="safe-area-inset-bottom"></view>
@@ -67,8 +60,12 @@
 </template>
 
 <script>
+	import Topbar from "@/components/topbar/topbar.vue"
 	import noticeApi from "@/common/api/notice.js"
 	export default {
+		components: {
+			Topbar
+		},
 		data() {
 			return {
 				newsData: [],
@@ -113,9 +110,13 @@
 	}
 
 	.container {
-		background-color: #f2f2f2;
+		background-color: #fff;
 		width: 750rpx;
+		min-height: 100vh;
+	}
 
+	.content-wrapper {
+		padding-top: calc(130rpx + var(--status-bar-height));
 	}
 
 	.solid {

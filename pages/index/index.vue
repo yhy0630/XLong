@@ -1,5 +1,7 @@
 <template>
   <view class="page-container">
+    <!-- 自定义顶部导航栏 -->
+    <topbar title="肃分安全培训" :showBack="false" />
     <!-- 骨架屏 -->
     <kz-skeleton
       v-if="showSkeleton"
@@ -20,7 +22,7 @@
             @confirm="search()"
             confirm-type="search"
           />
-        </view>
+        </view> 
       </view>
 
       <!-- 轮播图 -->
@@ -82,7 +84,7 @@
       </view>
 
       <!-- 功能按钮 -->
-      <view class="function-buttons">
+      <!-- <view class="function-buttons">
         <view 
           class="function-item"
           v-for="(item, index) in functionList"
@@ -92,12 +94,13 @@
           <image v-if="item.icon" class="function-icon" :src="item.icon" mode="aspectFit"></image>
           <text class="function-name">{{ item.name }}</text>
         </view>
-      </view>
+      </view> -->
 
       <!-- 标签导航和内容列表容器 -->
       <view class="content-container">
         <!-- 标签导航 -->
         <view class="tab-navigation">
+          <view class="tab-list">
           <view 
             class="tab-item"
             :class="{ active: activeTab === index }"
@@ -108,6 +111,8 @@
             <text>{{ tab }}</text>
             <view class="tab-underline" v-if="activeTab === index"></view>
           </view>
+          </view>
+          <view class="tab-more" @click="goNewsList">更多 ❯</view>
         </view>
 
         <!-- 分隔线 -->
@@ -209,6 +214,7 @@
 <script>
 // import HeadLine from '@/components/headline/headline.vue'
 import AddTip from "@/components/struggler-uniapp-add-tip/struggler-uniapp-add-tip.vue";
+import Topbar from "@/components/topbar/topbar.vue";
 import subjectApi from "@/common/api/subject.js";
 
 var interstitialAd = null;
@@ -217,6 +223,7 @@ export default {
   components: {
     // HeadLine,
     AddTip,
+    Topbar,
   },
   data() {
     return {
@@ -250,42 +257,42 @@ export default {
       tabs: ["推荐", "新动态", "微课堂", "学案例", "综合"],
       trainingList: [
         {
-          name: "自管人员考培",
-          icon: "/static/img/icon.png",
+          name: "自管人员考培\n(自管 劳务 联运)",
+          icon: "/static/img/ziguan.png",
           path: "/pages/training/self-managed",
         },
         {
-          name: "委外人员考培",
-          icon: "/static/img/lu.png",
+          name: "承包商人员考培\n(施工单位人员)",
+          icon: "/static/img/chengbaoshang.png",
           path: "/pages/training/outsourced",
         },
       ],
-      functionList: [
-        {
-          name: "微课堂",
-          icon: "/static/img/shuo.png",
-          bgColor: "#FF6B6B",
-          path: "/pages/index/micro-class",
-        },
-        {
-          name: "新闻动态",
-          icon: "/static/img/yellow.png",
-          bgColor: "#9B59B6",
-          path: "/pages/index/news-list",
-        },
-        {
-          name: "问卷练习",
-          icon: "/static/img/icon.png",
-          bgColor: "#3498DB",
-          path: "/pages/train/index?page=train",
-        },
-        {
-          name: "企业考试",
-          icon: "/static/img/lu.png",
-          bgColor: "#9B59B6",
-          path: "/pages/paper/index",
-        },
-      ],
+      // functionList: [
+      //   {
+      //     name: "微课堂",
+      //     icon: "/static/img/shuo.png",
+      //     bgColor: "#FF6B6B",
+      //     path: "/pages/index/micro-class",
+      //   },
+      //   {
+      //     name: "新闻动态",
+      //     icon: "/static/img/yellow.png",
+      //     bgColor: "#9B59B6",
+      //     path: "/pages/index/news-list",
+      //   },
+      //   {
+      //     name: "问卷练习",
+      //     icon: "/static/img/icon.png",
+      //     bgColor: "#3498DB",
+      //     path: "/pages/train/index?page=train",
+      //   },
+      //   {
+      //     name: "企业考试",
+      //     icon: "/static/img/lu.png",
+      //     bgColor: "#9B59B6",
+      //     path: "/pages/paper/index",
+      //   },
+      // ],
     };
   },
   computed: {
@@ -534,6 +541,10 @@ export default {
     goNoticeList() {
       this.utils.goto("notice-list");
     },
+    // 跳转更多新闻列表
+    goNewsList() {
+      this.utils.goto("news-list");
+    },
 
     // 点击公告，跳转公告详情
     clickNotice(id) {
@@ -588,12 +599,13 @@ export default {
 
 <style lang="scss">
 page {
-  background-color: #f5f5f5;
+  background-color: #f7f7f7;
 }
 
 .page-container {
   min-height: 100vh;
   background-color: #f7f7f7;
+  padding-top: calc(130rpx + var(--status-bar-height));
 }
 
 .main-content {
@@ -647,9 +659,9 @@ page {
 /* 通知公告 */
 .notice-section {
   margin: 20rpx 30rpx;
-  background-color: #f0f4ff;
+  background-color: #EBF2FC;
   border-radius: 8rpx;
-  padding: 20rpx 24rpx;
+  padding: 10rpx 24rpx;
   display: flex;
   align-items: center;
   
@@ -657,21 +669,24 @@ page {
     position: relative;
     margin-right: 20rpx;
     flex-shrink: 0;
+    margin-left: -35rpx;
     
     .notice-bg-img {
-      width: 80rpx;
-      height: 80rpx;
+      width: 100rpx;
+      height: 100rpx;
       display: block;
     }
     
     .label-text-wrapper {
       position: absolute;
-      left: 10rpx;
+      left: 50%;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translate(-50%, -50%);
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
       
       .label-line1,
       .label-line2 {
@@ -736,24 +751,21 @@ page {
     flex: 1;
     
     .training-icon-wrapper {
-      width: 120rpx;
-      height: 120rpx;
-      background: linear-gradient(135deg, #5677fc 0%, #4c6ef5 100%);
-      border-radius: 24rpx;
+      width: auto;
+      height: auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 16rpx;
-      box-shadow: 0 4rpx 12rpx rgba(86, 119, 252, 0.3);
+      // margin-bottom: 16rpx;
       
       .training-icon {
-        width: 70rpx;
-        height: 70rpx;
+        width: 100rpx;
+        height: 120rpx;
       }
     }
     
     .training-name {
-      font-size: 26rpx;
+      font-size: 30rpx;
       color: #333;
       font-weight: 500;
     }
@@ -797,9 +809,14 @@ page {
 
 /* 标签导航 */
 .tab-navigation {
-  padding: 20rpx 0;
+  padding: 20rpx 30rpx;
   display: flex;
-  justify-content: space-around;
+  align-items: center;
+  justify-content: space-between;
+
+  .tab-list {
+    display: flex;
+  }
   
   .tab-item {
     position: relative;
@@ -808,7 +825,7 @@ page {
     color: #666;
     
     &.active {
-      color: #333;
+      color: #FF4D00;
       font-weight: bold;
       
       .tab-underline {
@@ -818,10 +835,16 @@ page {
         transform: translateX(-50%);
         width: 40rpx;
         height: 6rpx;
-        background-color: #FF6B6B;
+        background-color: #FF4D00;
         border-radius: 3rpx;
       }
     }
+  }
+
+  .tab-more {
+    font-size: 24rpx;
+    color: #999;
+    flex-shrink: 0;
   }
 }
 

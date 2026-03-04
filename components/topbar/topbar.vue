@@ -1,69 +1,116 @@
 <template>
-	<view>
-		<tui-navigation-bar splitLine @init="initNavigation" @change="opacityChange" :scrollTop="scrollTop" :title="title" :backgroundColor="backgroundColor" :color="color">
-			<view class="tui-header-icon" :style="{ marginTop: top + 'px' }"><tui-icon name="arrowleft" :color="opacity > 0.85 ? color : backgroundColor" @click="back"></tui-icon></view>
-		</tui-navigation-bar>
-	</view>
+  <view class="custom-navbar" :style="{ paddingTop: statusBarHeight + 'px' }">
+    <view class="navbar-content">
+      <view class="navbar-left" @click="handleBack">
+        <image
+          v-if="showBack"
+          class="back-icon"
+          src="/static/member/back.png"
+          mode="aspectFit"
+        ></image>
+      </view>
+      <view class="navbar-title">
+        <text class="title-text">{{ title }}</text>
+      </view>
+      <view class="navbar-right">
+        <slot name="right"></slot>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
-	export default {
-		name:"topbar",
-		props: {
-			title: {
-				type: String,
-				default: ''
-			},
-			color: {
-				type: String,
-				default: '#333'
-			},
-			backgroundColor: {
-				type: String,
-				default: '#fff'
-			},
-			//滚动条滚动距离
-			scrollTop: {
-				type: [Number, String],
-				default: 0
-			},
-		},
-		data() {
-			return {
-				top: 0, //标题图标距离顶部距离
-				opacity: 0,
-				scrollTop: 0.5,
-			};
-		},
-		onPageScroll(e) {
-			this.scrollTop = e.scrollTop;
-		},
-		methods: {
-			initNavigation(e) {
-				this.opacity = e.opacity;
-				this.top = e.top;
-			},
-			opacityChange(e) {
-				this.opacity = e.opacity;
-			},
-			back() {
-				uni.navigateBack()
-			},
-		}
-	}
+export default {
+  name: 'topbar',
+  props: {
+    title: {
+      type: String,
+      default: ''
+    },
+    showBack: {
+      type: Boolean,
+      default: true
+    }
+  },
+  data() {
+    return {
+      statusBarHeight: 0
+    }
+  },
+  mounted() {
+    const systemInfo = uni.getSystemInfoSync()
+    this.statusBarHeight = systemInfo.statusBarHeight || 0
+  },
+  methods: {
+    handleBack() {
+      if (this.showBack) {
+        this.$emit('back')
+        if (!this.$listeners.back) {
+          uni.navigateBack({
+            delta: 1
+          })
+        }
+      }
+    }
+  }
+}
 </script>
 
-<style>
-.tui-header-icon {
-	width: 100%;
-	position: fixed;
-	top: 0;
-	padding: 0 12rpx;
-	display: flex;
-	align-items: center;
-	height: 32px;
-	transform: translateZ(0);
-	z-index: 99999;
-	box-sizing: border-box;
+<style scoped>
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  /* 使用你项目的蓝色渐变背景 */
+  background: linear-gradient(90deg, #44A6FF 0%, #5975FF 100%);
+}
+
+.navbar-content {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx;
+  position: relative;
+}
+
+.navbar-left {
+  width: 80rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.back-icon {
+  width: 40rpx;
+  height: 40rpx;
+  filter: brightness(0) invert(1);
+}
+
+.navbar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-text {
+  font-size: 35rpx;
+  /* font-weight: bold; */
+  /* 简化为纯白文字，适配顶部蓝色渐变 */
+  color: #ffffff;
+}
+
+.navbar-right {
+  width: 80rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 </style>

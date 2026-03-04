@@ -3,7 +3,7 @@
 
     <!-- 头部信息 -->
     <view class="test-header" v-if="showCountDown">
-      <tui-countdown :time="limit_time" borderColor="#FFF" color="#080808" :size="36" :colonSize="36"
+      <tui-countdown :time="limit_time" borderColor="#FFF" color="#5677FCFC" :size="36" :colonSize="36"
                      @end="endOfTime"></tui-countdown>
     </view>
 
@@ -424,13 +424,14 @@
       <view class="cu-dialog tibiao" @click.stop>
         <scroll-view scroll-y="true" class="tibiao-scroll">
           <view class="tibiao-scroll-list">
-            <!-- class="tibiao-item" -->
-            <!-- :class="[getNumberPanelClass(index)]" -->
-            <!-- :class="swiperIndex - 1 == index ? 'selected' : (list[index] && (list[index].check || list[index].user_answers) ? 'right' : '')" -->
             <view
               :class="['tibiao-item', getNumberPanelClass(index)]"
-              v-for="(item, index) in total" :key="index" @click="changeQuestion(index)">
-              {{ index + 1 }}
+              v-for="(item, index) in total"
+              :key="index"
+              @click="changeQuestion(index)"
+            >
+              <text>{{ index + 1 }}</text>
+              <text v-if="isNumberAnswered(index)" class="tibiao-label">已答</text>
             </view>
           </view>
         </scroll-view>
@@ -914,6 +915,27 @@ export default {
         }
 
         return classes
+      }
+    },
+    // 是否已作答，用于题标下方“已答”文案
+    isNumberAnswered () {
+      return (index) => {
+        const question = this.list[index]
+        if (!question || !question.kind) return false
+
+        switch (question.kind) {
+          case 'JUDGE':
+          case 'SINGLE':
+          case 'MULTI':
+            // 客观题：选过答案（check）或已判分（is_right）
+            return !!(question.check || question.is_right)
+          case 'FILL':
+          case 'SHORT':
+            // 主观题：有填写内容
+            return !!question.user_answers
+          default:
+            return false
+        }
       }
     },
     // 获取错题来源文本
@@ -2031,6 +2053,7 @@ page {
             margin-bottom: 30rpx;
             border: 1rpx solid #d0d0d0;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             margin-right: 45rpx;
@@ -2038,20 +2061,29 @@ page {
             &:nth-child(5n) {
               margin-right: 0;
             }
+            // 已作答（或答对）
 
             &.tibiao-right {
               background: #4caf50;
               color: #fff;
             }
+            // 该题被判错
 
             &.tibiao-error {
               background: #ff4400;
               color: #fff;
             }
+            // 正在浏览/作答的题
 
             &.selected {
               background: #5677fc;
               color: #fff;
+            }
+
+            .tibiao-label {
+              margin-top: 6rpx;
+              font-size: 20rpx;
+              color: inherit;
             }
           }
         }

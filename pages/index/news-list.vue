@@ -1,19 +1,24 @@
 <template>
   <view class="news-list-page">
-    <!-- #ifdef H5 -->
-    <tn-nav-bar fixed :bottomShadow="false" backTitle=" ">
-      <view class="">
-        <text class="tn-text-lg">新闻动态</text>
-      </view>
-    </tn-nav-bar>
-    <!-- #endif -->
+    <image class="page-top-bg" src="/static/images/banner3.png" mode="aspectFill"></image>
 
-    <!-- 搜索框 -->
+    <view class="page-content">
     <view class="search-box">
+      <view class="search-header">
+        <image
+          class="back-icon"
+          src="/static/member/back.png"
+          mode="widthFix"
+          @click="goBack"
+        ></image>
+        <text class="search-title">资讯动态</text>
+      </view>
+
+      <!-- 搜索框 -->
       <view class="search-input-wrapper">
         <image
           class="search-icon"
-          src="/static/img/搜索.png"
+          src="/static/img/search.png"
           mode="widthFix"
         ></image>
         <input
@@ -21,120 +26,124 @@
           type="text"
           v-model="keyword"
           placeholder="搜索你感兴趣的资讯"
+          placeholder-style="color:#FFF;"
           confirm-type="search"
           @confirm="onSearch"
         />
       </view>
     </view>
 
-    <!-- 分类Tab -->
-    <view class="cate-tabs" v-if="cateList.length > 0">
-      <scroll-view scroll-x class="tabs-scroll">
-        <view 
-          class="tab-item" 
-          :class="{ active: currentCateId === 0 }"
-          @click="switchCate(0)"
-        >
-          全部
-        </view>
-        <view 
-          class="tab-item" 
-          v-for="cate in cateList" 
-          :key="cate.id"
-          :class="{ active: currentCateId === cate.id }"
-          @click="switchCate(cate.id)"
-        >
-          {{ cate.name }}
-        </view>
-      </scroll-view>
-    </view>
+    <view class="list-box">
+      <!-- 分类Tab -->
+      <view class="cate-tabs" v-if="cateList.length > 0">
+        <scroll-view scroll-x class="tabs-scroll">
+          <view 
+            class="tab-item" 
+            :class="{ active: currentCateId === 0 }"
+            @click="switchCate(0)"
+          >
+            全部
+          </view>
+          <view 
+            class="tab-item" 
+            v-for="cate in cateList" 
+            :key="cate.id"
+            :class="{ active: currentCateId === cate.id }"
+            @click="switchCate(cate.id)"
+          >
+            {{ cate.name }}
+          </view>
+        </scroll-view>
+      </view>
 
-    <!-- 列表内容 -->
-    <view v-if="list.length > 0" class="news-list">
-      <!-- 图文样式 -->
-      <view
-        v-for="(item, index) in list"
-        :key="index"
-        class="news-item image-text-item"
-        v-if="item.style === 'IMAGE_TEXT' || !item.style"
-        @click="goDetail(item.id)"
-      >
-        <view class="item-content">
-          <view class="item-left">
+      <!-- 列表内容 -->
+      <view v-if="list.length > 0" class="news-list">
+        <!-- 图文样式 -->
+        <view
+          v-for="(item, index) in list"
+          :key="index"
+          class="news-item image-text-item"
+          v-if="item.style === 'IMAGE_TEXT' || !item.style"
+          @click="goDetail(item.id)"
+        >
+          <view class="item-content">
+            <view class="item-left">
+              <!-- 列表展示两行内容，多余部分省略：优先使用 contents，没有则回退 name -->
+              <view class="item-title">
+                {{ item.contents || item.name }}
+              </view>
+              <view class="item-stats">
+                <view class="stat-item">
+                  <image class="stat-icon" src="/static/img/hand.png" mode="widthFix"></image>
+                  <text>{{ item.like_count || 0 }}</text>
+                </view>
+                <view class="stat-item">
+                  <image class="stat-icon" src="/static/img/message.png" mode="widthFix"></image>
+                  <text>{{ item.comment_count || 0 }}</text>
+                </view>
+                <view class="stat-item">
+                  <image class="stat-icon" src="/static/img/eye.png" mode="widthFix"></image>
+                  <text>{{ item.view_count || 0 }}</text>
+                </view>
+              </view>
+            </view>
+            <view class="item-right" v-if="item.cover_image">
+              <image 
+                :src="item.cover_image" 
+                mode="aspectFill"
+                class="cover-image"
+              ></image>
+            </view>
+          </view>
+        </view>
+
+        <!-- 视频样式 -->
+        <view
+          v-for="(item, index) in list"
+          :key="index"
+          class="news-item video-item"
+          v-if="item.style === 'VIDEO'"
+          @click="goDetail(item.id)"
+        >
+          <view class="video-cover-wrapper">
+            <image 
+              :src="item.cover_image || '/static/img/default-video.png'" 
+              mode="aspectFill"
+              class="video-cover"
+            ></image>
+            <view class="play-icon">▶</view>
+          </view>
+          <view class="video-info">
             <!-- 列表展示两行内容，多余部分省略：优先使用 contents，没有则回退 name -->
             <view class="item-title">
               {{ item.contents || item.name }}
             </view>
             <view class="item-stats">
-              <text class="stat-item">
-                <text class="icon">👍</text>
-                {{ item.like_count || 0 }}
-              </text>
-              <text class="stat-item">
-                <text class="icon">💬</text>
-                {{ item.comment_count || 0 }}
-              </text>
-              <text class="stat-item">
-                <text class="icon">👁</text>
-                {{ item.view_count || 0 }}
-              </text>
+              <view class="stat-item">
+                <image class="stat-icon" src="/static/img/hand.png" mode="widthFix"></image>
+                <text>{{ item.like_count || 0 }}</text>
+              </view>
+              <view class="stat-item">
+                <image class="stat-icon" src="/static/img/message.png" mode="widthFix"></image>
+                <text>{{ item.comment_count || 0 }}</text>
+              </view>
+              <view class="stat-item">
+                <image class="stat-icon" src="/static/img/eye.png" mode="widthFix"></image>
+                <text>{{ item.view_count || 0 }}</text>
+              </view>
             </view>
           </view>
-          <view class="item-right" v-if="item.cover_image">
-            <image 
-              :src="item.cover_image" 
-              mode="aspectFill"
-              class="cover-image"
-            ></image>
-          </view>
         </view>
       </view>
 
-      <!-- 视频样式 -->
-      <view
-        v-for="(item, index) in list"
-        :key="index"
-        class="news-item video-item"
-        v-if="item.style === 'VIDEO'"
-        @click="goDetail(item.id)"
-      >
-        <view class="video-cover-wrapper">
-          <image 
-            :src="item.cover_image || '/static/img/default-video.png'" 
-            mode="aspectFill"
-            class="video-cover"
-          ></image>
-          <view class="play-icon">▶</view>
-        </view>
-        <view class="video-info">
-          <!-- 列表展示两行内容，多余部分省略：优先使用 contents，没有则回退 name -->
-          <view class="item-title">
-            {{ item.contents || item.name }}
-          </view>
-          <view class="item-stats">
-            <text class="stat-item">
-              <text class="icon">👍</text>
-              {{ item.like_count || 0 }}
-            </text>
-            <text class="stat-item">
-              <text class="icon">💬</text>
-              {{ item.comment_count || 0 }}
-            </text>
-            <text class="stat-item">
-              <text class="icon">👁</text>
-              {{ item.view_count || 0 }}
-            </text>
-          </view>
-        </view>
+      <view v-else class="empty-box">
+        <tui-no-data imgUrl="/static/img/img_noorder_3x.png">暂无数据</tui-no-data>
       </view>
-    </view>
-
-    <view v-else class="empty-box">
-      <tui-no-data imgUrl="/static/img/img_noorder_3x.png">暂无数据</tui-no-data>
     </view>
 
     <view class="tn-tabbar-height"></view>
     <tabbar :theme="tabbarStyle"></tabbar>
+    </view>
   </view>
 </template>
 
@@ -222,6 +231,12 @@ export default {
       this.list = [];
       this.getData();
     },
+    // 返回上一级
+    goBack() {
+      uni.navigateBack({
+        delta: 1,
+      });
+    },
   },
 };
 </script>
@@ -235,27 +250,76 @@ page {
   min-height: 100vh;
   padding-bottom: 120rpx;
   background-color: #fff;
+  position: relative;
 }
 
 /* 搜索框 */
 .search-box {
   padding: 20rpx 30rpx 10rpx;
-  background: linear-gradient(180deg, #4f7efe, #ffffff);
+  background: transparent;
+}
+
+/* 搜索区域标题栏 */
+.search-header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 10rpx;
+  position: relative;
+  justify-content: center;
+}
+
+.back-icon {
+  width: 18rpx;
+  height: 24rpx;
+  position: absolute;
+  left: 0;
+}
+
+.search-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.list-box {
+  background-color: #fff;
+  margin:20rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.28);
+}
+
+/* 顶部背景图层（只覆盖顶部区域） */
+.page-top-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 320rpx;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 内容层：确保在背景图之上 */
+.page-content {
+  position: relative;
+  z-index: 1;
+  padding-top: 80rpx;
 }
 
 .search-input-wrapper {
-  border: 0.5px solid #FFFFFF80;
-  background: #FFFFFF47;
+  // border: 0.5px solid #FFFFFF80;
+  background: #FFFFFF50;
 
   border-radius: 30rpx;
-  padding: 10rpx 24rpx;
+  padding: 12rpx 24rpx;
   display: flex;
   align-items: center;
-  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.08);
+  // box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.08);
+  margin-top: 25rpx;
 }
 
 .search-icon {
-  width: 32rpx;
+  width: 35rpx;
   height: 32rpx;
   margin-right: 16rpx;
 }
@@ -274,6 +338,7 @@ page {
   position: sticky;
   top: 0;
   z-index: 10;
+  border-radius: 20rpx;
 }
 
 .tabs-scroll {
@@ -412,6 +477,12 @@ page {
     margin-right: 4rpx;
     font-size: 22rpx;
   }
+}
+
+.stat-icon {
+  width: 25rpx;
+  height: 22rpx;
+  margin-right: 6rpx;
 }
 
 .stat-time {

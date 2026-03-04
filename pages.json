@@ -9,7 +9,8 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "肃分安全培训"
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/paper/index",
@@ -25,7 +26,8 @@
 			"style": {
 				"navigationBarTitleText": "考试试卷",
 				"enablePullDownRefresh": false,
-				"autoBackButton": false
+				"autoBackButton": false,
+				"navigationStyle": "custom"
 				// "navigationBarBackgroundColor": "#FFFFFF",
 				// "navigationBarTextStyle": "black",
 				// "titleNView": false,
@@ -111,34 +113,36 @@
 		}, {
 			"path": "pages/index/notice-list",
 			"style": {
-				"navigationBarTitleText": "公告列表",
+				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false,
 				// 距离底部50px时，触发onReachBottom事件
-				"onReachBottonDistance": 50
-				// "navigationBarTitleText": "",
-				// "navigationStyle": "custom"
+				"onReachBottonDistance": 50,
+				"navigationStyle": "custom"
 			}
 
 		}, {
 			"path": "pages/index/notice-detail",
 			"style": {
 				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/index/news-list",
 			"style": {
-                "navigationBarTitleText": "新闻动态列表",
+                "navigationBarTitleText": "",
 				"enablePullDownRefresh": false,
 				// 距离底部50px时，触发onReachBottom事件
-				"onReachBottonDistance": 50
+				"onReachBottonDistance": 50,
+				"navigationStyle": "custom"
 			}
 
 		}, {
 			"path": "pages/index/news-detail",
 			"style": {
                 "navigationBarTitleText": "新闻动态",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/index/micro-class",
@@ -195,7 +199,8 @@
 			"path": "pages/training/self-managed",
 			"style": {
 				"navigationBarTitleText": "自管人员考培",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/training/outsourced",
@@ -261,8 +266,8 @@
 				"path": "index",
 				"style": {
 					"navigationBarTitleText": "考场列表",
-					"enablePullDownRefresh": false
-					// "navigationStyle": "custom"
+					"enablePullDownRefresh": false,
+					"navigationStyle": "custom"
 				}
 			}, {
 				"path": "detail",

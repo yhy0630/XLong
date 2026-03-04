@@ -1,5 +1,8 @@
 <template>
-	<view>
+	<view class="room-page">
+		<!-- 自定义顶部导航栏 -->
+		<topbar title="考试" />
+
 		<!-- 顶部自定义导航 -->
 		<!-- <tn-nav-bar fixed :bottomShadow="false" backTitle=" ">
 			<view class="">
@@ -14,39 +17,42 @@
 		<view class="paper-contains">
 			<!-- 考场列表 -->
 			<view class="paper-card" v-for="(item, index) in list" :key="index">
-				<navigator :url="'detail?id='+item.id" hover-class="none">
-					<tui-card :title="{text: item.name, size: 30, color: '#7A7A7A'}"
-						:tag="{text: item.cates ? item.cates.name : '-', size: 24}" class="article-shadow">
-						<template v-slot:body>
-							<view class="tui-default">
-								<view class="">
-									{{item.contents}}
-								</view>
+				<tui-card
+					:title="{text: item.name, size: 35, color: '#000'}"
+					:tag="{text: item.cates ? item.cates.name : '-', size: 24}"
+					:status="getRoomStatus(item)"
+					class="article-shadow"
+					@click="handleRoomClick(item)"
+				>
+					<template v-slot:body>
+						<view class="tui-default">
+							<view class="">
+								{{item.contents}}
 							</view>
-						</template>
-						<template v-slot:footer>
+						</view>
+					</template>
+					<template v-slot:footer>
+						
+						<view class="tui-default">
+							<view class="">
+								考试时间：{{item.start_time|format_date}} - {{item.end_time|format_date}}
+							</view>
 							
-							<view class="tui-default">
-								<view class="">
-									考试时间：{{item.start_time|format_date}} - {{item.end_time|format_date}}
+							<text>报名方式：</text>
+							<text class="cu-tag" :class="[getSignupModeClass(item)]">{{item.signup_mode_text}}</text>
+							
+							<view class="cu-capsule round m-l-30" v-if="item.is_makeup">
+								<view class='cu-tag bg-blue '>
+									可补考
 								</view>
-								
-								<text>报名方式：</text>
-								<text class="cu-tag" :class="[getSignupModeClass(item)]">{{item.signup_mode_text}}</text>
-								
-								<view class="cu-capsule round m-l-30" v-if="item.is_makeup">
-									<view class='cu-tag bg-blue '>
-										可补考
-									</view>
-									<view class="cu-tag line-blue">
-										{{item.makeup_count}}次
-									</view>
+								<view class="cu-tag line-blue">
+									{{item.makeup_count}}次
 								</view>
-								<!-- <text class="cu-tag m-l-30" :class="[getMakeupModeClass(item)]">{{item.makeup_mode_text}}</text> -->
 							</view>
-						</template>
-					</tui-card>
-				</navigator>
+							<!-- <text class="cu-tag m-l-30" :class="[getMakeupModeClass(item)]">{{item.makeup_mode_text}}</text> -->
+						</view>
+					</template>
+				</tui-card>
 			</view>
 
 			<!-- 加载状态条 -->
@@ -66,10 +72,12 @@
 
 <script>
 	import HMfilterDropdown from '@/components/HM-filterDropdown/HM-filterDropdown.vue';
+	import Topbar from "@/components/topbar/topbar.vue";
 
 	export default {
 		components: {
 			'HMfilterDropdown': HMfilterDropdown,
+			Topbar,
 		},
 		data() {
 			return {
@@ -192,6 +200,36 @@
 				}
 			},
 
+			// 计算考场状态
+			getRoomStatus(item) {
+				if (!item || !item.start_time || !item.end_time) {
+					return { text: '', type: '' }
+				}
+				const now = Date.now() / 1000
+				if (now < item.start_time) {
+					return { text: '未开始', type: 'not-started' }
+				}
+				if (now >= item.start_time && now <= item.end_time) {
+					return { text: '进行中', type: 'processing' }
+				}
+				return { text: '已结束', type: 'finished' }
+			},
+
+			// 点击考场卡片：只有进行中的才允许进入详情
+			handleRoomClick(item) {
+				const status = this.getRoomStatus(item)
+				if (!status || status.type !== 'processing') {
+					uni.showToast({
+						title: '当前考试不可参加',
+						icon: 'none'
+					})
+					return
+				}
+				if (item && item.id) {
+					this.utils.goto('/pages/room/detail?id=' + item.id)
+				}
+			},
+
 
 			// tabSelect(e) {
 			// 	this.tabCur = e.currentTarget.dataset.id;
@@ -203,10 +241,23 @@
 
 <style>
 	page {
-		background-color: #fff;
+		background-color: #ededed;
+	}
+
+	.room-page {
+		min-height: 100vh;
+		background-color: #ededed;
+		padding-top: calc(130rpx + var(--status-bar-height));
+		box-sizing: border-box;
+	}
+
+	/* HMfilterDropdown 组件本身是 fixed，需要下移到自定义 topbar 下方 */
+	.room-page .HMfilterDropdown {
+		top: calc(130rpx + var(--status-bar-height)) !important;
 	}
 	
 	.paper-contains {
+		/* 给 fixed 的筛选条留出空间 */
 		margin-top: 50px;
 	}
 

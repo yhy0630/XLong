@@ -1,14 +1,7 @@
 <template>
   <view class="message tn-safe-area-inset-bottom">
-    <!-- #ifdef H5 -->
-    <!-- 顶部自定义导航 -->
-    <tn-nav-bar fixed :bottomShadow="false" backTitle=" ">
-      <view class="">
-        <text class="tn-text-lg">公告</text>
-        <text class="tn-text-xl tn-padding-left-sm tn-icon-group-circle"></text>
-      </view>
-    </tn-nav-bar>
-    <!-- #endif -->
+    <!-- 自定义顶部导航栏 -->
+    <topbar title="通知公告" :showBack="true" />
 
     <view v-if="list.length > 0">
       <view
@@ -70,9 +63,13 @@
 </template>
 
 <script>
+import Topbar from "@/components/topbar/topbar.vue";
 import noticeApi from "@/common/api/notice.js";
 export default {
   name: "Message",
+  components: {
+    Topbar,
+  },
   data() {
     return {
       list: [],
@@ -122,6 +119,7 @@ page {
 }
 .message {
   max-height: 100vh;
+  padding-top: calc(130rpx + var(--status-bar-height));
 }
 
 /* 自定义导航栏内容 start */
@@ -154,7 +152,7 @@ page {
 /* 页面阴影 start*/
 .wallpaper-shadow {
   border-radius: 15rpx;
-  box-shadow: 0rpx 0rpx 50rpx 0rpx rgba(0, 0, 0, 0.07);
+  box-shadow: 0rpx 0rpx 50rpx 50rpx rgba(0, 0, 0, 0.07);
 }
 
 /* 图标容器15 start */

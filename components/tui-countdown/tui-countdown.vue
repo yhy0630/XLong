@@ -130,7 +130,7 @@ export default {
 		//冒号颜色
 		colonColor: {
 			type: String,
-			default: '#333'
+			default: '#5677FC'
 		},
 		//剩余时间 (单位：秒)
 		time: {

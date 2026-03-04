@@ -3,9 +3,30 @@
 	 @longtap="longTap">
 		<view class="tui-card-header" :class="{'tui-header-line':header.line}" :style="{background:header.bgcolor || '#fff'}">
 			<view class="tui-header-left">
-				<image :src="image.url" class="tui-header-thumb" :class="{'tui-thumb-circle':image.circle}" mode="widthFix" v-if="image.url"
-				 :style="{height:(image.height || 60)+'rpx',width:(image.width || 60)+'rpx'}"></image>
-				<text class="tui-header-title" :style="{fontSize:(title.size || 30)+'rpx',color:(title.color || '#7A7A7A')}" v-if="title.text">{{title.text}}</text>
+				<image
+					:src="image.url"
+					class="tui-header-thumb"
+					:class="{'tui-thumb-circle':image.circle}"
+					mode="widthFix"
+					v-if="image.url"
+					:style="{height:(image.height || 60)+'rpx',width:(image.width || 60)+'rpx'}"
+				></image>
+				<view class="tui-header-info">
+					<text
+						class="tui-header-title"
+						:style="{fontSize:(title.size || 30)+'rpx',color:(title.color || '#7A7A7A')}"
+						v-if="title.text"
+					>
+						{{title.text}}
+					</text>
+					<view
+						class="tui-header-status"
+						v-if="status && status.text"
+						:class="['tui-status-' + (status.type || '')]"
+					>
+						{{ status.text }}
+					</view>
+				</view>
 			</view>
 			<view class="tui-header-right" :style="{fontSize:(tag.size || 24)+'rpx',color:(tag.color || '#b2b2b2')}" v-if="tag.text">
 				{{tag.text}}
@@ -75,6 +96,16 @@
 			border: {
 				type: Boolean,
 				default: false
+			},
+			// 考场/业务状态：{ text: '进行中', type: 'processing' | 'finished' | 'not-started' }
+			status: {
+				type: Object,
+				default: function() {
+					return {
+						text: '',
+						type: ''
+					}
+				}
 			},
 			index: {
 				type: Number,
@@ -167,6 +198,16 @@
 		border-bottom: 0 !important;
 	}
 
+	.tui-header-left {
+		display: flex;
+		align-items: center;
+	}
+
+	.tui-header-info {
+		display: flex;
+		flex-direction: column;
+	}
+
 	.tui-header-thumb {
 		height: 60rpx;
 		width: 60rpx;
@@ -181,13 +222,35 @@
 
 	.tui-header-title {
 		display: inline-block;
-		font-size: 30rpx;
-		color: #7a7a7a;
+		font-size: 18px;
+		color: #000;
 		vertical-align: middle;
 		max-width: 460rpx;
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+		font-weight: 700;
+	}
+
+	.tui-header-status {
+		margin-top: 12rpx;
+		align-self: flex-start;
+		padding: 8rpx 24rpx;
+		border-radius: 999rpx;
+		font-size: 22rpx;
+		color: #fff;
+	}
+
+	.tui-status-processing {
+		background-color: #35B071;
+	}
+
+	.tui-status-finished {
+		background-color: #788897;
+	}
+
+	.tui-status-not-started {
+		background-color: #f5a623;
 	}
 
 	.tui-header-right {
@@ -207,5 +270,6 @@
 		border-bottom-left-radius: 10rpx;
 		border-bottom-right-radius: 10rpx;
 		box-sizing: border-box;
+		border-top: 1rpx solid #eaeef1;
 	}
 </style>
