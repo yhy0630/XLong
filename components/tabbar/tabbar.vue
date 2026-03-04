@@ -33,11 +33,11 @@
 					<text :style="'color:' + (route == '/pages/paper/index' ? '#5677fc' : '#9b9b9b')">模拟考试</text>
 				</navigator>
 
-				<navigator url="/pages/index/news-list" hover-class="none" open-type="reLaunch">
+				<navigator url="/pages/room/classroom/classroom" hover-class="none" open-type="reLaunch">
 					<image
-						:src="route == '/pages/index/news-list' ? '/static/tabbar/Icon (3).png' : '/static/tabbar/Icon.png'">
+						:src="route == '/pages/room/classroom/classroom' ? '/static/tabbar/Icon (3).png' : '/static/tabbar/Icon.png'">
 					</image>
-					<text :style="'color:' + (route == '/pages/index/news-list' ? '#5677fc' : '#9b9b9b')">培训课堂</text>
+					<text :style="'color:' + (route == '/pages/room/classroom/classroom' ? '#5677fc' : '#9b9b9b')">培训课堂</text>
 				</navigator>
 
 				<navigator url="/pages/room/index" hover-class="none" open-type="reLaunch">
@@ -83,7 +83,7 @@
 					{
 						name: '培训课堂',
 						icon: 'tn-icon-inventory',
-						path: '',
+						path: '/pages/room/classroom/classroom',
 					},
 					{
 						name: '考场列表',
@@ -117,7 +117,7 @@
 					{
 						name: '培训课堂',
 						icon: 'tn-icon-inventory',
-						path: '',
+						path: '/pages/room/classroom/classroom',
 					},
 					{
 						name: '考场列表',

@@ -263,39 +263,52 @@
 		{
 			"root": "pages/room/",
 			"pages": [{
-				"path": "index",
-				"style": {
-					"navigationBarTitleText": "考场列表",
-					"enablePullDownRefresh": false,
-					"navigationStyle": "custom"
+					"path": "index",
+					"style": {
+						"navigationBarTitleText": "考场列表",
+						"enablePullDownRefresh": false,
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "detail",
+					"style": {
+						"navigationBarTitleText": "考场详情",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "signup-index",
+					"style": {
+						"navigationBarTitleText": "报名记录",
+						"enablePullDownRefresh": false
+					}
+			
+				},
+				{
+					"path": "grade",
+					"style": {
+						"navigationBarTitleText": "考场成绩",
+						"enablePullDownRefresh": false
+					}
+			
+				},
+				{
+					"path": "rank",
+					"style": {
+						"navigationBarTitleText": "考场排行榜",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
+					"path": "classroom/classroom",
+					"style": {
+						"navigationBarTitleText": "",
+						"enablePullDownRefresh": false,
+						"navigationStyle": "custom"
+					}
 				}
-			}, {
-				"path": "detail",
-				"style": {
-					"navigationBarTitleText": "考场详情",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "signup-index",
-				"style": {
-					"navigationBarTitleText": "报名记录",
-					"enablePullDownRefresh": false
-				}
-
-			}, {
-				"path": "grade",
-				"style": {
-					"navigationBarTitleText": "考场成绩",
-					"enablePullDownRefresh": false
-				}
-
-			}, {
-				"path": "rank",
-				"style": {
-					"navigationBarTitleText": "考场排行榜",
-					"enablePullDownRefresh": false
-				}
-			}]
+			]
 		},
 		// 用户
 		{
