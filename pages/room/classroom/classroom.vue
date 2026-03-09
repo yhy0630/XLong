@@ -449,15 +449,24 @@ page {
   justify-content: space-between;
 }
 
+.like-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .like-icon {
   width: 32rpx;
   height: 32rpx;
   margin-right: 6rpx;
+  display: block;
+  flex-shrink: 0;
 }
 
 .like-count {
   font-size: 24rpx;
   color: #999;
+  line-height: 32rpx;
 }
 
 .tn-tabbar-height {

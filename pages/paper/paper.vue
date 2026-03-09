@@ -543,7 +543,7 @@
 
 	.container {
 		padding-top: calc(130rpx + var(--status-bar-height));
-		padding-bottom: 120rpx;
+		padding-bottom: 20rpx;
 		box-sizing: border-box;
 	}
 
