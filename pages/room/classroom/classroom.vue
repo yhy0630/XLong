@@ -152,6 +152,9 @@ export default {
           duration: "15:20",
           likeCount: 234,
           liked: false,
+          publishDate: "2025-11-17",
+          viewCount: 1205,
+          videoUrl: "",
         },
         {
           id: 2,
@@ -161,6 +164,9 @@ export default {
           duration: "15:20",
           likeCount: 234,
           liked: false,
+          publishDate: "2025-11-18",
+          viewCount: 980,
+          videoUrl: "",
         },
       ],
     };
@@ -179,11 +185,25 @@ export default {
       // 这里后续可以根据 currentTab 调用接口获取不同列表
       // 目前先复用同一份假数据
     },
-    // 跳转视频详情（后续你提供实际路由）
+    // 跳转视频详情
     goVideoDetail(video) {
-      // 占位：后续根据实际详情页路径修改
-      // uni.navigateTo({ url: `/pages/training/detail?id=${video.id}` });
-      console.log("go video detail", video.id);
+      const videoParam = encodeURIComponent(
+        JSON.stringify({
+          id: video.id,
+          title: video.title,
+          cover: video.cover,
+          duration: video.duration,
+          teacher: video.teacher,
+          likeCount: video.likeCount,
+          liked: video.liked,
+          publishDate: video.publishDate,
+          viewCount: video.viewCount,
+          videoUrl: video.videoUrl,
+        })
+      );
+      uni.navigateTo({
+        url: `/pages/room/classroom/detail?video=${videoParam}`,
+      });
     },
     // 点赞（本地状态切换）
     toggleLike(video) {

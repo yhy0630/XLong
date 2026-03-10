@@ -81,7 +81,11 @@
 				gradeItem: null,
 				// sheet action
 				showAction: false,
-				tipsAction: '',
+				tipsAction: {
+					text: '',
+					color: '',
+					fontSize: 26,
+				},
 				listAction: [],
 				
 			}
@@ -129,7 +133,7 @@
 			clickGrade(item) {
 				console.log('grade item', item)
 				this.gradeItem = item
-				this.tipsAction = {text: item.paper?.title}
+				this.tipsAction = { text: item.paper?.title || '', color: '', fontSize: 26 }
 				
 				let listAction = [
 					{text: '查看排行榜'}
@@ -158,7 +162,7 @@
 			},
 			// 关闭actionSheet
 			closedActionSheet() {
-			  this.show = false
+			  this.showAction = false
 			}
 		}
 	}
@@ -189,6 +193,5 @@
 	.grade-content {
 		
 	}
-	
-	
+</style>
 </style>

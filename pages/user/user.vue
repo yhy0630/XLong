@@ -1,8 +1,15 @@
 <template>
   <view>
+    <topbar title="个人中心" :showBack="false"></topbar>
+
     <!-- 简约风格 -->
-    <!-- <kz-page-my-simple :user="user" @login="login" @goTo="goTo" @clearStorage="clearStorage"
-			v-if="pageStyle == 'simple'"></kz-page-my-simple> -->
+    <kz-page-my-simple
+      :user="user"
+      @login="login"
+      @goTo="goTo"
+      @clearStorage="clearStorage"
+      v-if="pageStyle == 'simple'"
+    ></kz-page-my-simple>
 
     <!-- 多彩风格1 -->
     <kz-page-my-color
@@ -48,8 +55,12 @@
 import userApi from "@/common/api/user.js";
 import commonApi from "@/common/api/common.js";
 import { nextTick } from "vue";
+import topbar from "@/components/topbar/topbar.vue";
 
 export default {
+  components: {
+    topbar,
+  },
   data() {
     return {
       imgUrl: this.url,
@@ -109,7 +120,6 @@ export default {
       if (page) {
         // 页面风格
         this.pageStyle = page.page_my_style ? page.page_my_style : "color2";
-        // this.pageStyle = 'color'
         // 大嘴鸟
         this.showMonster = page.page_my_monster_btn == 1;
       }
@@ -248,5 +258,6 @@ export default {
 <style>
 page {
   background-color: #fff;
+  padding-top: 175rpx;
 }
 </style>

@@ -54,7 +54,8 @@
 			"path": "pages/wrong/index",
 			"style": {
 				"navigationBarTitleText": "错题记录",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
 			}
 
 		}, {
@@ -145,12 +146,6 @@
 				"navigationStyle": "custom"
 			}
 		}, {
-			"path": "pages/index/micro-class",
-			"style": {
-				"navigationBarTitleText": "微课堂",
-				"enablePullDownRefresh": false
-			}
-		}, {
 			"path": "pages/score/good-detail",
 			"style": {
 				"navigationBarTitleText": "积分详情",
@@ -179,6 +174,20 @@
 			"style": {
 				"navigationBarTitleText": "积分记录",
 				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/score/score-stat",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/score/score-stat-detail",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -262,7 +271,8 @@
 		// 考场
 		{
 			"root": "pages/room/",
-			"pages": [{
+			"pages": [
+				{
 					"path": "index",
 					"style": {
 						"navigationBarTitleText": "考场列表",
@@ -289,7 +299,8 @@
 					"path": "grade",
 					"style": {
 						"navigationBarTitleText": "考场成绩",
-						"enablePullDownRefresh": false
+						"enablePullDownRefresh": false,
+						"navigationStyle": "custom"
 					}
 			
 				},
@@ -306,6 +317,13 @@
 						"navigationBarTitleText": "",
 						"enablePullDownRefresh": false,
 						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "classroom/detail",
+					"style": {
+						"navigationBarTitleText": "课堂详情",
+						"enablePullDownRefresh": false
 					}
 				}
 			]
@@ -383,6 +401,13 @@
 				"style": {
 					"navigationBarTitleText": "我的档案",
 					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "privacy",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false,
+					"navigationStyle": "custom"
 				}
 			}]
 		}

@@ -1,49 +1,26 @@
 <template>
-	<view>
-		<view class="solids-bottom padding-xs flex align-center">
+	<view class="grade-page">
+		<topbar title="考场成绩"></topbar>
+		<!-- <view class="solids-bottom padding-xs flex align-center">
 			<view class="flex-sub text-left">
 				<view class="solid-bottom text-sm padding">
 					<text class="text-grey">* 可点击记录进行其他操作</text>
 				</view>
 			</view>
-		</view>
+		</view> -->
 		
 		<view class="grade-list">
 			<view class="grade-card" v-for="(item, index) in list" :key="index" @click="clickGrade(item)">
-				<tui-card :title="{text: item.room ? item.room.name : '-', size: 30, color: '#7A7A7A'}" :tag="{text: item.paper ? item.paper.title : '-', size: 24}">
-					<template v-slot:body>
-						<view class="m-lr-20 grade-content text-sm">
-							<view class="grid m-t-20">
-								<view class="" style="width: 45%;">总分数：{{item.total_score}}分</view>
-								<view>得分数：{{item.score}}分</view>
-							</view>
-							
-							<view class="grid">
-								<view style="width: 45%;">答对数：{{item.right_count}}题</view>
-								<view>答错数：{{item.error_count}}题</view>
-							</view>
-							
-							<view class="grid">
-								<view style="width: 45%;">
-									<view class="" :class="item.is_pass ? ['text-green'] : ['text-red']">{{item.is_pass ? '及格' : '未及格'}}</view>
-								</view>
-								<view>
-									<view class="" :class="item.is_makeup ? ['text-red'] : ['text-green']">{{item.is_makeup ? '补考' : ''}}</view>
-								</view>
-							</view>
-						</view>
-					</template>
-					<template v-slot:footer>
-						<view class="grade-time">
-							<view class="grade-time-item" style="width: 69%;">
-								时间：{{item.createtime|format_date}}
-							</view>
-							<view class="grade-time-item">
-								用时：{{item.grade_time|format_second('0秒')}}
-							</view>
-						</view>
-					</template>
-				</tui-card>
+				<view class="result-item">
+					<view class="result-left">
+						<view class="result-title">{{ item.paper ? item.paper.title : '-' }}</view>
+						<view class="result-time">考试时间：{{item.createtime|format_date}}</view>
+					</view>
+					<view class="result-right">
+						<image class="result-stamp" :src="item.is_pass ? passStamp : failStamp" mode="aspectFit"></image>
+						<view class="result-score">{{ item.score }}</view>
+					</view>
+				</view>
 				
 			</view>
 			
@@ -74,7 +51,11 @@
 </template>
 
 <script>
+	import topbar from "@/components/topbar/topbar.vue"
 	export default {
+		components: {
+			topbar
+		},
 		data() {
 			return {
 				showLoading: false,
@@ -87,11 +68,20 @@
 				gradeItem: null,
 				// sheet action
 				showAction: false,
-				tipsAction: '',
+				tipsAction: {
+					text: '',
+					color: '',
+					fontSize: 26,
+				},
 				listAction: [],
+				passStamp: '',
+				failStamp: '',
 			}
 		},
 		onLoad(e) {
+			// 通过/未通过 章图片
+			this.passStamp = '/pages/room/static/images/yitongguo 1.png'
+			this.failStamp = '/pages/room/static/images/weitongguo 1.png'
 			this.getList()
 		},
 		async onReachBottom() {
@@ -134,7 +124,7 @@
 			clickGrade(item) {
 				console.log('grade item', item)
 				this.gradeItem = item
-				this.tipsAction = {text: item.paper?.title}
+				this.tipsAction = { text: item.paper?.title || '', color: '', fontSize: 26 }
 				
 				let listAction = [
 					{text: '查看排行榜'}
@@ -163,13 +153,18 @@
 			},
 			// 关闭actionSheet
 			closedActionSheet() {
-			  this.show = false
+			  this.showAction = false
 			}
 		}
 	}
 </script>
 
 <style>
+	.grade-page {
+		/* 为固定 topbar 预留空间，避免内容被遮挡（statusBar + 88rpx ≈ 180rpx） */
+		padding-top: 180rpx;
+	}
+
 	.grade-list {
 		padding-bottom: 20rpx;
 	}
@@ -177,23 +172,74 @@
 	.grade-card {
 		margin: 20rpx 0;
 	}
+
+	.result-item {
+		background: #fff;
+		border-radius: 16rpx;
+		margin: 0 20rpx;
+		padding: 10rpx 24rpx;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.06);
+	}
+
+	.result-left {
+		flex: 1;
+		padding-right: 20rpx;
+	}
+
+	.result-title {
+		font-size: 40rpx;
+		font-weight: 600;
+		color: #222;
+		line-height: 1.4;
+	}
+
+	.result-time {
+		margin-top: 12rpx;
+		font-size: 26rpx;
+		color: #5f5f5f;
+	}
+
+	.result-right {
+		width: 200rpx;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.result-score {
+		font-size: 50rpx;
+		font-weight: 500;
+		color: #F54447;
+		line-height: 1;
+	}
+
+	.score-unit {
+		font-size: 24rpx;
+		font-weight: 500;
+		margin-left: 6rpx;
+		color: #111;
+	}
+
+	.result-stamp {
+		margin-top: 10rpx;
+		width: 130rpx;
+		height: 130rpx;
+	}
+
+	.result-label {
+		margin-top: 6rpx;
+		font-size: 24rpx;
+		color: #333;
+	}
 	
 	.options {
 		margin: 20rpx 0;
 		line-height: 50rpx;
 	}
 	
-	.grade-time {
-		margin: 20rpx 0;
-		padding: 0rpx 15rpx;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-	}
-	
-	.grade-content {
-		
-	}
-	
-	
+	/* .grade-content 预留，暂不需要样式 */
 </style>
