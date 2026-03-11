@@ -1,14 +1,8 @@
 <template>
   <view class="challenge-list-page">
-    <!-- #ifdef H5 -->
-    <tn-nav-bar fixed :bottomShadow="false" backTitle=" ">
-      <view class="">
-        <text class="tn-text-lg">闯关练习</text>
-      </view>
-    </tn-nav-bar>
-    <!-- #endif -->
+    <topbar title="闯关练习"></topbar>
 
-    <view class="challenge-list">
+    <view class="challenge-list content">
       <view 
         class="challenge-item"
         v-for="(item, index) in challengeList"
@@ -18,7 +12,7 @@
         <view class="item-content">
           <view class="item-title">{{ item.name }}</view>
           <view class="item-reward">
-            <text class="reward-icon">⭐</text>
+            <image class="reward-icon" src="/static/img/jifenguanli 1.png" mode="aspectFit"></image>
             <text class="reward-text">通关送积分</text>
           </view>
           <view class="item-time">考试限时: {{ formatTime(item.time_limit) }}</view>
@@ -34,7 +28,10 @@
 </template>
 
 <script>
+import topbar from "@/components/topbar/topbar.vue";
+
 export default {
+  components: { topbar },
   data() {
     return {
       challengeList: []
@@ -87,6 +84,12 @@ page {
   padding: 20rpx 30rpx;
 }
 
+.content {
+  /* 为固定 topbar 预留空间 */
+  padding-top: 180rpx;
+  box-sizing: border-box;
+}
+
 .challenge-list {
   .challenge-item {
     background-color: #fff;
@@ -113,19 +116,21 @@ page {
         margin-bottom: 12rpx;
         
         .reward-icon {
-          font-size: 28rpx;
+          width: 28rpx;
+          height: 28rpx;
           margin-right: 8rpx;
+          flex-shrink: 0;
         }
         
         .reward-text {
           font-size: 26rpx;
-          color: #5677fc;
+          color: #A4A4A4;
         }
       }
       
       .item-time {
         font-size: 24rpx;
-        color: #999;
+        color: #A4A4A4;
       }
     }
     
@@ -133,7 +138,7 @@ page {
       width: 140rpx;
       height: 60rpx;
       line-height: 60rpx;
-      background: linear-gradient(135deg, #5677fc 0%, #4c6ef5 100%);
+      background: #5677FC;
       color: #fff;
       border-radius: 30rpx;
       font-size: 26rpx;

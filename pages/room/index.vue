@@ -62,6 +62,65 @@
 		<view class="tn-tabbar-height"></view>
 
 		<tabbar></tabbar>
+
+		<!-- 签名弹窗（半屏） -->
+		<tn-popup
+			v-model="showSignModal"
+			mode="bottom"
+			length="auto"
+			:popup="false"
+			:borderRadius="24"
+			:maskCloseable="true"
+			@close="closeSignModal"
+		>
+			<view class="sign-sheet">
+				<view class="sign-sheet-header">
+					<view class="sign-sheet-title">请签本人姓名</view>
+					<view class="sign-sheet-close" @click="closeSignModal">×</view>
+				</view>
+				<view class="sign-board">
+					<signature-pad
+						ref="sigPad"
+						canvasId="sigPadCanvas"
+						@change="signHasData = $event"
+					></signature-pad>
+				</view>
+				<view class="sign-actions">
+					<view class="sign-clear" @click="clearSign">
+						<image class="sign-clear-icon" src="/static/img/eraser-fill 1.png" mode="aspectFit"></image>
+					</view>
+					<view class="sign-full" @click="openFullscreenSign">横屏签名</view>
+				</view>
+				<view class="sign-next" @click="confirmSignAndNext">下一步</view>
+			</view>
+		</tn-popup>
+
+		<!-- 全屏签名层（可旋转手机横屏使用） -->
+		<view class="sign-fullscreen" v-if="showSignFullscreen">
+			<view class="sign-fullscreen-close" @click="closeFullscreenSign">×</view>
+			<view class="sign-fullscreen-body">
+				<view class="sign-fullscreen-title">
+					<text
+						v-for="(ch, idx) in '请签本人姓名'.split('').reverse()"
+						:key="'t' + idx"
+						class="vchar"
+					>{{ ch }}</text>
+				</view>
+				<view class="sign-fullscreen-board">
+					<cover-view class="sign-fullscreen-eraser" @click.stop="$refs.sigFull && $refs.sigFull.clear()">
+						<cover-image class="sign-fullscreen-eraser-img" src="/static/img/eraser-fill 1.png"></cover-image>
+					</cover-view>
+					<signature-pad ref="sigFull" canvasId="sigFullCanvas"></signature-pad>
+				</view>
+				<view class="sign-fullscreen-next" @click="confirmFullscreenSign">
+					<text
+						v-for="(ch, idx) in '下一步'.split('').reverse()"
+						:key="'n' + idx"
+						class="vchar vchar-white"
+					>{{ ch }}</text>
+				</view>
+			</view>
+		</view>
 		<!-- <scroll-view scroll-x class="bg-white nav" scroll-with-animation :scroll-left="scrollLeft">
 			<view class="cu-item" :class="index==tabCur?'text-green cur':''" v-for="(item,index) in 10" :key="index" @tap="tabSelect" :data-id="index">
 				Tab{{index}}
@@ -73,11 +132,15 @@
 <script>
 	import HMfilterDropdown from '@/components/HM-filterDropdown/HM-filterDropdown.vue';
 	import Topbar from "@/components/topbar/topbar.vue";
+	import SignaturePad from "@/components/signature-pad/signature-pad.vue";
+	import TnPopup from "@/tuniao-ui/components/tn-popup/tn-popup.vue";
 
 	export default {
 		components: {
 			'HMfilterDropdown': HMfilterDropdown,
 			Topbar,
+			SignaturePad,
+			TnPopup,
 		},
 		data() {
 			return {
@@ -92,6 +155,12 @@
 				current_page: 1,
 				loadFlag: 'loading',
 				subjectId: 0,
+				// signature
+				showSignModal: false,
+				showSignFullscreen: false,
+				signHasData: false,
+				signImage: '',
+				pendingRoomItem: null,
 			}
 		},
 		onLoad(e) {
@@ -225,8 +294,58 @@
 					})
 					return
 				}
-				if (item && item.id) {
-					this.utils.goto('/pages/room/detail?id=' + item.id)
+				// 进入考试前先签名
+				this.pendingRoomItem = item
+				this.showSignModal = true
+			},
+
+			closeSignModal() {
+				this.showSignModal = false
+			},
+			openFullscreenSign() {
+				// 打开全屏前先关闭半屏弹窗，避免遮挡
+				this.showSignModal = false
+				this.showSignFullscreen = true
+				this.$nextTick(() => {
+					this.$refs.sigFull && this.$refs.sigFull.clear()
+				})
+			},
+			closeFullscreenSign() {
+				this.showSignFullscreen = false
+			},
+			clearSign() {
+				this.$refs.sigPad && this.$refs.sigPad.clear()
+				this.signImage = ''
+			},
+			async confirmSignAndNext() {
+				try {
+					const tempPath = await (this.$refs.sigPad && this.$refs.sigPad.exportImage())
+					this.signImage = tempPath
+					this.showSignModal = false
+					if (this.pendingRoomItem && this.pendingRoomItem.id) {
+						// TODO: 这里可以把 signImage 上传/提交给后端
+						this.utils.goto('/pages/room/detail?id=' + this.pendingRoomItem.id)
+					}
+				} catch (e) {
+					uni.showToast({
+						title: '请先签名',
+						icon: 'none'
+					})
+				}
+			},
+			async confirmFullscreenSign() {
+				try {
+					const tempPath = await (this.$refs.sigFull && this.$refs.sigFull.exportImage())
+					this.signImage = tempPath
+					this.closeFullscreenSign()
+					// 同步到半屏签名板显示
+					this.$refs.sigPad && this.$refs.sigPad.clear()
+					this.signHasData = true
+				} catch (e) {
+					uni.showToast({
+						title: '请先签名',
+						icon: 'none'
+					})
 				}
 			},
 
@@ -366,5 +485,179 @@
 		min-height: 60rpx;
 		height: calc(40rpx + env(safe-area-inset-bottom) / 2);
 		height: calc(40rpx + constant(safe-area-inset-bottom));
+	}
+
+	/* 签名弹窗 */
+	.sign-sheet {
+		background: #fff;
+		padding: 18rpx 24rpx 28rpx;
+	}
+
+	.sign-sheet-header {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		padding: 12rpx 0 18rpx;
+	}
+
+	.sign-sheet-title {
+		font-size: 30rpx;
+		font-weight: 600;
+		color: #222;
+	}
+
+	.sign-sheet-close {
+		position: absolute;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 60rpx;
+		height: 60rpx;
+		line-height: 60rpx;
+		text-align: center;
+		font-size: 40rpx;
+		color: #999;
+	}
+
+	.sign-board {
+		height: 360rpx;
+		border: 2rpx dashed #e6e6e6;
+		border-radius: 12rpx;
+		overflow: hidden;
+		background: #fff;
+	}
+
+	.sign-actions {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 16rpx 4rpx 22rpx;
+		color: #666;
+		font-size: 26rpx;
+	}
+
+	.sign-clear,
+	.sign-full {
+		padding: 10rpx 14rpx;
+	}
+
+	.sign-clear-icon {
+		width: 34rpx;
+		height: 34rpx;
+		display: block;
+	}
+
+	.sign-next {
+		height: 92rpx;
+		border-radius: 46rpx;
+		background: #4d7cff;
+		color: #fff;
+		font-size: 30rpx;
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	/* 全屏签名层 */
+	.sign-fullscreen {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 9999;
+		background: #fff;
+	}
+
+	.sign-fullscreen-close {
+		position: absolute;
+		left: 10rpx;
+		top: calc(10rpx + var(--status-bar-height));
+		width: 64rpx;
+		height: 64rpx;
+		line-height: 64rpx;
+		text-align: center;
+		font-size: 44rpx;
+		color: #999;
+		z-index: 2;
+	}
+
+	.sign-fullscreen-body {
+		padding-top: calc(20rpx + var(--status-bar-height));
+		height: 100vh;
+		display: flex;
+		align-items: stretch;
+	}
+
+	.sign-fullscreen-title {
+		width: 72rpx;
+		margin: 24rpx 0 24rpx 24rpx;
+		color: #333;
+		font-size: 28rpx;
+		font-weight: 600;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		letter-spacing: 6rpx;
+	}
+
+	.sign-fullscreen-board {
+		flex: 1;
+		margin: 24rpx;
+		border: 2rpx dashed #e6e6e6;
+		border-radius: 12rpx;
+		overflow: hidden;
+		position: relative;
+	}
+
+	.sign-fullscreen-next {
+		width: 92rpx;
+		margin: 24rpx 24rpx 24rpx 0;
+		background: #4d7cff;
+		color: #fff;
+		border-radius: 46rpx;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		font-size: 28rpx;
+		font-weight: 600;
+		letter-spacing: 6rpx;
+	}
+
+	.vchar {
+		display: block;
+		transform: rotate(-90deg);
+		transform-origin: center;
+		line-height: 1.1;
+		margin: 6rpx 0;
+		color: #333;
+	}
+
+	.vchar-white {
+		color: #fff;
+	}
+
+	.sign-fullscreen-eraser {
+		position: absolute;
+		right: 16rpx;
+		top: 16rpx;
+		width: 56rpx;
+		height: 56rpx;
+		background: rgba(255, 255, 255, 0.9);
+		border-radius: 12rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 3;
+	}
+
+	.sign-fullscreen-eraser-img {
+		width: 34rpx;
+		height: 34rpx;
+		display: block;
 	}
 </style>

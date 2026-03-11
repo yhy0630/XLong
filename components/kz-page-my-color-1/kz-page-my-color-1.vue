@@ -170,7 +170,7 @@
 
         <!-- 方式12 start：我的考评靠左放置 -->
         <view class="tn-flex tn-flex-row-left tn-radius tn-padding-top">
-          <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/training/self-managed')" v-if="userInfo">
+          <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/user/my-evaluation')" v-if="userInfo">
             <view class="tn-flex tn-flex-direction-column tn-flex-row-center tn-flex-col-center">
               <view
                 class="icon12__item--icon tn-flex tn-flex-row-center tn-flex-col-center tn-bg-blue--light">

@@ -221,7 +221,8 @@
 			"path": "pages/training/challenge-list",
 			"style": {
 				"navigationBarTitleText": "闯关练习",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/training/challenge",
@@ -404,6 +405,13 @@
 				}
 			}, {
 				"path": "privacy",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false,
+					"navigationStyle": "custom"
+				}
+			}, {
+				"path": "my-evaluation",
 				"style": {
 					"navigationBarTitleText": "",
 					"enablePullDownRefresh": false,
