@@ -10,27 +10,20 @@
 
     <view class="login">
       <!-- 顶部背景图片-->
-      <view class="login__bg login__bg--top"
-        ><image
-          class="bg"
-          src="/static/user/login_top2.jpg"
-          mode="widthFix"
-        ></image
-      ></view>
       <view class="login__bg login__bg--top">
         <image
-          class="rocket rocket-sussuspension"
-          src="/static/user/login_top3.png"
+          class="bg"
+          src="/static/user/image 58.png"
           mode="widthFix"
         ></image>
       </view>
 
       <view
         class="login__wrapper"
-        :class="openRegister ? [] : ['margin-top-300']"
+        :class="openRegister ? [] : ['margin-top-370']"
       >
         <!-- 登录/注册切换 -->
-        <view
+        <!-- <view
           class="login__mode tn-flex tn-flex-direction-row tn-flex-nowrap tn-flex-col-center tn-flex-row-center"
           v-if="openRegister"
         >
@@ -47,17 +40,21 @@
             >注册</view
           >
 
-          <!-- 滑块-->
+          滑块
           <view
             class="login__mode__slider tn-cool-bg-color-5--reverse"
             :style="[modeSliderStyle]"
           ></view>
-        </view>
+        </view> -->
 
         <!-- 输入框内容-->
         <view
           class="login__info tn-flex tn-flex-direction-column tn-flex-col-center tn-flex-row-center"
         >
+          <!-- 标题（替换登录/注册切换） -->
+          <view class="login__title">
+            {{ currentModeIndex === 0 ? "登录" : "注册" }}
+          </view>
           <!-- 登录 -->
           <block v-if="currentModeIndex === 0">
             <view
@@ -239,11 +236,30 @@
 
           <view
             class="login__info__item__button tn-cool-bg-color-5--reverse"
+            :class="[agreeProtocol ? '' : 'login__submit--disabled']"
             hover-class="tn-hover"
             :hover-stay-time="150"
             @click="submit()"
           >
             {{ currentModeIndex === 0 ? "登录" : "注册" }}
+          </view>
+
+          <!-- 登录/注册底部切换入口 -->
+          <view class="login__switch-text">
+            <text
+              v-if="currentModeIndex === 0"
+              class="login__switch-text__link"
+              @tap.stop="modeSwitch(1)"
+              >注册账号</text
+            >
+            <view v-else class="login__switch-text__row">
+              <text class="login__switch-text__muted">已有账号？</text>
+              <text
+                class="login__switch-text__link"
+                @tap.stop="modeSwitch(0)"
+                >去登录</text
+              >
+            </view>
           </view>
 
           <!-- <view v-if="currentModeIndex === 0" class="login__info__item__tips">忘记密码?</view> -->
@@ -273,12 +289,30 @@
           </view>
         </view>
         <!-- #endif -->
+
+        <!-- 协议同意 -->
+        <view class="login__agreement">
+          <view class="login__agreement__check" @tap.stop="toggleProtocolAgree">
+            <text
+              class="login__agreement__check-icon"
+              :class="[agreeProtocol ? 'tn-icon-success-circle-fill' : 'tn-icon-circle']"
+            ></text>
+          </view>
+          <text class="login__agreement__text">我已阅读并同意</text>
+          <text class="login__agreement__link" @tap.stop="goAgreement('service')"
+            >《用户服务协议》</text
+          >
+          <text class="login__agreement__text">和</text>
+          <text class="login__agreement__link" @tap.stop="goAgreement('privacy')"
+            >《隐私协议》</text
+          >
+        </view>
       </view>
 
       <!-- 底部背景图片-->
-      <view class="login__bg login__bg--bottom"
+      <!-- <view class="login__bg login__bg--bottom"
         ><image src="/static/user/login_bottom_bg.jpg" mode="widthFix"></image
-      ></view>
+      ></view> -->
     </view>
 	
 	<kz-wx-privacy-check ref="kzWxPrivacyCheck"></kz-wx-privacy-check>
@@ -317,6 +351,7 @@ export default {
       },
       openRegister: true,
       system: null,
+      agreeProtocol: false,
     };
   },
   watch: {
@@ -343,7 +378,21 @@ export default {
       this.showPassword = false;
     },
 
+    goAgreement(type) {
+      // 先占位，后续如有对应页面可直接跳转
+      const title = type === "service" ? "用户服务协议" : "隐私协议";
+      this.utils.toast(title);
+    },
+
+    toggleProtocolAgree() {
+      this.agreeProtocol = !this.agreeProtocol;
+    },
+
     submit() {
+      if (!this.agreeProtocol) {
+        this.utils.toast("请先阅读并同意《用户服务协议》和《隐私协议》");
+        return;
+      }
       if (this.currentModeIndex === 0) {
         this.login();
       } else {
@@ -503,13 +552,23 @@ export default {
 }
 
 page {
-  background: #fff;
+  background: linear-gradient(180deg, #45a2ff 30%, #FFFFFF 30%);
 }
 
 .login {
   position: relative;
   height: 100%;
   z-index: 1;
+
+  &__title {
+    margin-top: 18rpx;
+    margin-bottom: 18rpx;
+    font-size: 50rpx;
+    font-weight: 700;
+    color: #333333;
+    text-align: center;
+    letter-spacing: 2rpx;
+  }
 
   /* 背景图片 start */
   &__bg {
@@ -551,7 +610,7 @@ page {
 
   /* 内容 start */
   &__wrapper {
-    margin-top: 303rpx;
+    margin-top: 370rpx;
     width: 100%;
   }
 
@@ -597,21 +656,23 @@ page {
 
   /* 登录注册信息 start */
   &__info {
-    margin: 0 30rpx;
+    // margin: 0 30rpx;
     margin-top: 40rpx;
-    padding: 30rpx 51rpx;
-    padding-bottom: 0;
+    padding: 0rpx 51rpx;
+    padding-bottom: 60rpx;
     border-radius: 20rpx;
-    background-color: #ffff;
-    box-shadow: 0rpx 10rpx 50rpx 0rpx rgba(0, 3, 72, 0.1);
+    background-color: #ffffff;
+    // box-shadow: 0rpx 10rpx 50rpx 0rpx rgba(0, 3, 72, 0.1);
+    min-height: 900rpx;
+    box-sizing: border-box;
 
     &__item {
       &__input {
         margin-top: 29rpx;
         width: 100%;
-        height: 77rpx;
+        height: 90rpx;
         border: 1rpx solid #e6e6e6;
-        border-radius: 39rpx;
+        border-radius: 15rpx;
 
         &__left-icon {
           width: 10%;
@@ -670,6 +731,70 @@ page {
   }
   /* 登录注册信息 end */
 
+  &__switch-text {
+    margin-top: 22rpx;
+    font-size: 26rpx;
+    color: #8a8a8a;
+    text-align: center;
+
+    &__row {
+      display: inline-flex;
+      align-items: center;
+      gap: 12rpx;
+    }
+
+    &__muted {
+      color: #8a8a8a;
+    }
+
+    &__link {
+      color: #5677fc;
+      font-weight: 500;
+    }
+  }
+
+  &__agreement {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(24rpx + env(safe-area-inset-bottom));
+    padding: 0 30rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 24rpx;
+    line-height: 1.6;
+    color: #8a8a8a;
+    z-index: 3;
+
+    &__check {
+      margin-right: 10rpx;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__check-icon {
+      font-size: 30rpx;
+      color: #d2d2d2;
+      line-height: 1;
+    }
+
+    /* 选中态颜色 */
+    .tn-icon-success-circle-fill {
+      color: #46a2ff;
+    }
+
+    &__text {
+      color: #8a8a8a;
+    }
+
+    &__link {
+      color: #46a2ff;
+    }
+  }
+
   /* 登录方式切换 start */
   &__way {
     margin: 0 auto;
@@ -711,7 +836,11 @@ page {
   color: #e6e6e6;
 }
 
-.margin-top-300 {
-  margin-top: 300px;
+.margin-top-370 {
+  margin-top: 370px;
+}
+
+.login__submit--disabled {
+  opacity: 0.55;
 }
 </style>
