@@ -1,12 +1,7 @@
 <template>
   <view class="training-page">
-    <!-- #ifdef H5 -->
-    <tn-nav-bar fixed :bottomShadow="false" backTitle=" ">
-      <view class="">
-        <text class="tn-text-lg">自管人员考培</text>
-      </view>
-    </tn-nav-bar>
-    <!-- #endif -->
+    <!-- 自定义顶部导航栏 -->
+    <topbar title="自管人员考培" />
 
     <view class="training-list">
       <view 
@@ -19,7 +14,7 @@
           <image v-if="item.icon" class="item-icon" :src="item.icon" mode="aspectFit"></image>
           <text class="item-text">{{ item.name }}</text>
         </view>
-        <image class="item-arrow" src="/static/img/right.png" mode="aspectFit"></image>
+        <tui-icon name="arrowright" color="#77797EE" :size="28" unit="px"></tui-icon>
       </view>
     </view>
   </view>
@@ -27,29 +22,42 @@
 
 <script>
 import userApi from "@/common/api/user.js";
+import Topbar from "@/components/topbar/topbar.vue";
+import tuiIcon from "@/components/tui-icon/tui-icon.vue";
 
 export default {
+  components: { Topbar, tuiIcon },
   data() {
     return {
       trainingList: [
         {
           name: "月度考试",
-          icon: "/static/img/icon.png",
+          icon: "/static/img/a-5_yuedu1 1.png",
           path: "/pages/paper/index?type=monthly",
         },
         {
           name: "年度考试",
-          icon: "/static/img/icon.png",
+          icon: "/static/img/a-5_niandu2 1.png",
           path: "/pages/paper/index?type=annual",
         },
         {
+          name: "日常练习",
+          icon: "/static/img/execise.png",
+          path: "/pages/train/index?page=train",
+        },
+        {
+          name: "模拟考试",
+          icon: "/static/img/execise.png",
+          path: "/pages/paper/index?type=mock",
+        },
+        {
           name: "闯关练习",
-          icon: "/static/img/lu.png",
+          icon: "/static/img/dituleilouti 1.png",
           path: "/pages/training/challenge-list",
         },
         {
           name: "学习视频",
-          icon: "/static/img/shuo.png",
+          icon: "/static/img/xuexishipin 1.png",
           path: "/pages/index/micro-class",
         },
       ],
@@ -83,18 +91,18 @@ export default {
 
 <style lang="scss" scoped>
 page {
-  background-color: #f5f5f5;
+  background-color: #ededed;
 }
 
 .training-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
-  padding-top: 20rpx;
+  background-color: #ededed;
+  padding-top: calc(130rpx + var(--status-bar-height));
 }
 
 .training-list {
   background-color: #fff;
-  margin: 0 30rpx;
+  margin: 15px 30rpx;
   border-radius: 16rpx;
   overflow: hidden;
   
@@ -119,7 +127,7 @@ page {
       flex: 1;
       
       .item-icon {
-        width: 52rpx;
+        width: 48rpx;
         height: 52rpx;
         margin-right: 24rpx;
       }

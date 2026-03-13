@@ -2,15 +2,8 @@
 <template>
   <view class="container" @tap="handleContainerTap">
 
-    <!-- #ifdef H5 -->
-    <!-- 顶部自定义导航 -->
-    <tn-nav-bar fixed :bottomShadow="false" backTitle=" ">
-      <view class="">
-        <text class="tn-text-lg">新闻动态</text>
-        <text class="tn-text-xl tn-padding-left-sm tn-icon-group-circle"></text>
-      </view>
-    </tn-nav-bar>
-    <!-- #endif -->
+    <!-- 自定义顶部导航栏 -->
+    <topbar title="动态详情" @back="handleBack" />
 
     <view>
       <view style="background-color: #FFFFFF;padding: 30rpx 30rpx 30rpx 30rpx;">
@@ -19,7 +12,8 @@
         <view class="flex justify-between text-df text-gray margin-top-sm margin-bottom-sm">
           <text>{{ newsData.create_time_text }}</text>
           <text v-if="newsData.view_count !== undefined">
-            <text class="icon">👁</text> {{ newsData.view_count }}
+            <image class="view-icon" src="/static/img/eye.png" mode="widthFix"></image>
+            <text>{{ newsData.view_count }}</text>
           </text>
         </view>
 
@@ -124,13 +118,18 @@
           <view class="action-buttons" v-if="!commentInputExpanded">
             <!-- 点赞按钮 -->
             <view class="action-btn" @click="toggleLike">
-              <view class="action-icon" :class="{ 'liked': isLiked }">👍</view>
+              <image
+                class="action-icon"
+                :class="{ liked: isLiked }"
+                src="/static/img/hand2.png"
+                mode="widthFix"
+              ></image>
               <text class="action-count">{{ newsData.like_count || 0 }}</text>
             </view>
             
             <!-- 评论按钮 -->
             <view class="action-btn" @click="expandCommentInput">
-              <view class="action-icon">💬</view>
+              <image class="action-icon" src="/static/img/message2.png" mode="widthFix"></image>
               <text class="action-count">{{ commentTotal }}</text>
             </view>
           </view>
@@ -140,13 +139,18 @@
             <view class="action-buttons">
               <!-- 点赞按钮 -->
               <view class="action-btn" @click="toggleLike">
-                <view class="action-icon" :class="{ 'liked': isLiked }">👍</view>
+                <image
+                  class="action-icon"
+                  :class="{ liked: isLiked }"
+                  src="/static/img/hand2.png"
+                  mode="widthFix"
+                ></image>
                 <text class="action-count">{{ newsData.like_count || 0 }}</text>
               </view>
               
               <!-- 评论按钮 -->
               <view class="action-btn" @click="collapseCommentInput">
-                <view class="action-icon">💬</view>
+                <image class="action-icon" src="/static/img/message2.png" mode="widthFix"></image>
                 <text class="action-count">{{ commentTotal }}</text>
               </view>
             </view>
@@ -195,9 +199,10 @@
 <script>
 import newsApi from "@/common/api/news.js"
 import login from "@/components/login/login.vue";
+import Topbar from "@/components/topbar/topbar.vue";
 
 export default {
-  components: { login },
+  components: { login, Topbar },
   data() {
     return {
       newsData: [],
@@ -391,7 +396,9 @@ export default {
       });
     },
     handleBack() {
-      this.utils.goto('news-list')
+      uni.navigateBack({
+        delta: 1,
+      });
     },
     handleGo() {
       if (this.newsData && this.newsData.front_info) {
@@ -432,6 +439,7 @@ uni-button {
   background-color: #fff;
   width: 750rpx;
   min-height: 100vh;
+  padding-top: calc(130rpx + var(--status-bar-height));
 }
 
 .solid {
@@ -648,12 +656,14 @@ image {
 }
 
 .action-icon {
-  font-size: 44rpx;
+  width: 44rpx;
+  height: 44rpx;
   margin-bottom: 8rpx;
   transition: all 0.3s;
   
   &.liked {
     filter: brightness(0) saturate(100%) invert(27%) sepia(100%) saturate(5000%) hue-rotate(348deg) brightness(100%) contrast(100%);
+    transform: scale(1.08);
   }
 }
 
@@ -661,5 +671,12 @@ image {
   font-size: 22rpx;
   color: #666;
   line-height: 1;
+}
+
+.view-icon {
+  width: 26rpx;
+  height: 26rpx;
+  margin-right: 8rpx;
+  vertical-align: middle;
 }
 </style>

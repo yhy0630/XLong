@@ -69,10 +69,13 @@ export default {
   data() {
     return {
       challengeId: 0,
+      cateId: 0,
+      level: 0,
+      perLevel: 5,
       challengeInfo: {},
       questionList: [],
       currentIndex: 0,
-      answers: {}, // 存储用户答案 {questionId: answer}
+      answers: {},
       remainingTime: 0,
       timer: null,
       showAnswer: false
@@ -82,13 +85,24 @@ export default {
     currentQuestion() {
       if (this.questionList.length === 0) return {};
       const question = this.questionList[this.currentIndex];
-      // 解析选项
+      // 解析选项：接口可能返回对象 {"A":"...","B":"..."} 或已是数组 [{key,value}]，统一为 [{key, value}]
       if (question.options_json) {
         try {
-          question.options = JSON.parse(question.options_json);
+          const parsed = typeof question.options_json === 'string'
+            ? JSON.parse(question.options_json)
+            : question.options_json;
+          if (Array.isArray(parsed)) {
+            question.options = parsed;
+          } else if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            question.options = Object.keys(parsed).map(k => ({ key: k, value: parsed[k] }));
+          } else {
+            question.options = [];
+          }
         } catch (e) {
           question.options = [];
         }
+      } else {
+        question.options = question.options || [];
       }
       return question;
     },
@@ -99,6 +113,9 @@ export default {
   onLoad(options) {
     if (options.id) {
       this.challengeId = parseInt(options.id);
+      this.cateId = parseInt(options.cate_id, 10) || 0;
+      this.level = parseInt(options.level, 10) || 0;
+      this.perLevel = parseInt(options.per_level, 10) || 5;
       this.loadChallengeData();
     }
   },
@@ -108,11 +125,15 @@ export default {
     }
   },
   methods: {
-    // 加载闯关数据
+    // 加载闯关数据（支持按关卡拉取题目）
     loadChallengeData() {
       uni.showLoading({ title: '加载中...' });
-      
-      this.http('challenge/practiceDetail', { id: this.challengeId }, 'get').then(res => {
+      const params = { id: this.challengeId };
+      if (this.level >= 1) {
+        params.level = this.level;
+        params.per_level = this.perLevel;
+      }
+      this.http('challenge/practiceDetail', params, 'get').then(res => {
         uni.hideLoading();
         if (res.code == 1 && res.data) {
           this.challengeInfo = res.data.challenge;
@@ -240,18 +261,42 @@ export default {
     // 执行交卷
     doSubmit() {
       uni.showLoading({ title: '提交中...' });
-      
-      this.http('challenge/practiceSubmit', {
+      const payload = {
         challenge_id: this.challengeId,
         answers: this.answers,
         time_used: this.challengeInfo.time_limit - this.remainingTime
-      }, 'post').then(res => {
+      };
+      if (this.level >= 1) {
+        payload.level = this.level;
+        payload.per_level = this.perLevel;
+      }
+      this.http('challenge/practiceSubmit', payload, 'post').then(res => {
         uni.hideLoading();
         if (res.code == 1) {
-          // 跳转到结果页
-          uni.redirectTo({
-            url: `/pages/training/challenge-result?id=${this.challengeId}&score=${res.data.score || 0}&correct=${res.data.correct_count || 0}&total=${res.data.total_count || 0}`
-          });
+          if (this.level >= 1) {
+            try {
+              const key = 'challenge_progress_' + this.challengeId;
+              const raw = uni.getStorageSync(key);
+              const obj = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : {};
+              const max = Math.max(obj.maxLevel || 0, this.level);
+              uni.setStorageSync(key, JSON.stringify({ maxLevel: max }));
+            } catch (e) {}
+            const backUrl = this.cateId
+              ? `/pages/training/challenge-levels?cate_id=${this.cateId}`
+              : `/pages/training/challenge-levels?id=${this.challengeId}`;
+            uni.redirectTo({ url: backUrl });
+          } else if (this.cateId) {
+            try {
+              uni.setStorageSync('challenge_progress_' + this.challengeId, JSON.stringify({ maxLevel: 1 }));
+            } catch (e) {}
+            uni.redirectTo({
+              url: `/pages/training/challenge-levels?cate_id=${this.cateId}`
+            });
+          } else {
+            uni.redirectTo({
+              url: `/pages/training/challenge-result?id=${this.challengeId}&score=${res.data.score || 0}&correct=${res.data.correct_count || 0}&total=${res.data.total_count || 0}`
+            });
+          }
         } else {
           uni.showToast({
             title: res.msg || '提交失败',

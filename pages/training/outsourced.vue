@@ -19,7 +19,7 @@
           <image v-if="item.icon" class="item-icon" :src="item.icon" mode="aspectFit"></image>
           <text class="item-text">{{ item.name }}</text>
         </view>
-        <image class="item-arrow" src="/static/img/right.png" mode="aspectFit"></image>
+        <tui-icon name="arrowright" color="#77797EE" :size="28" unit="px"></tui-icon>
       </view>
     </view>
   </view>
@@ -27,24 +27,31 @@
 
 <script>
 import userApi from "@/common/api/user.js";
+import tuiIcon from "@/components/tui-icon/tui-icon.vue";
 
 export default {
+  components: { tuiIcon },
   data() {
     return {
       trainingList: [
         {
           name: "日常练习",
-          icon: "/static/img/icon.png",
+          icon: "/static/img/execise.png",
           path: "/pages/train/index?page=daily",
         },
         {
+          name: "模拟考试",
+          icon: "/static/img/execise.png",
+          path: "/pages/paper/index?type=mock",
+        },
+        {
           name: "考试",
-          icon: "/static/img/icon.png",
+          icon: "/static/img/execise.png",
           path: "/pages/paper/index?type=exam",
         },
         {
           name: "学习视频",
-          icon: "/static/img/shuo.png",
+          icon: "/static/img/xuexishipin 1.png",
           path: "/pages/index/micro-class",
         },
       ],
