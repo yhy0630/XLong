@@ -142,7 +142,7 @@
         <view class="custom-modal-content">
           <view class="">
             <view
-              class="tn-text-lg tn-text-bold tn-color-purplered tn-text-center tn-padding"
+              class="tn-text-lg tn-text-bold tn-text-center tn-padding"
               >修改昵称</view
             >
             <view
@@ -184,7 +184,7 @@
         <view class="custom-modal-content">
           <view class="">
             <view
-              class="tn-text-lg tn-text-bold tn-color-purplered tn-text-center tn-padding"
+              class="tn-text-lg tn-text-bold tn-text-center tn-padding"
               >变更手机号码</view
             >
             <view

@@ -58,7 +58,7 @@ export default {
         {
           name: "学习视频",
           icon: "/static/img/xuexishipin 1.png",
-          path: "/pages/index/micro-class",
+          path: "pages/room/classroom/classroom",
         },
       ],
     };

@@ -1,9 +1,6 @@
 <template>
   <view class="page-e tn-safe-area-inset-bottom">
-    <view class="top-backgroup" v-if="userInfo">
-      <image :src="imgHost + '/assets/addons/exam/img/my/my-bg4.png'" mode="widthFix" class="backgroud-image">
-      </image>
-    </view>
+    <view class="top-backgroup"></view>
 
     <view class="tn-margin-left tn-margin-right" :style="{paddingTop: vuex_custom_bar_height + 'px'}">
       <!-- 图标logo/头像 -->
@@ -22,7 +19,7 @@
               <view class="tn-padding-right tn-padding-left-sm">
                 <block>
                   <text
-                    class="tn-color-wallpaper tn-text-xl tn-text-bold">{{ userInfo.nickname }}
+                    class="tn-color-wallpaper tn-text-xl tn-text-bold" style="color: #ffffff;">{{ userInfo.nickname }}
                   </text>
                   <text class=" tn-round tn-text-xs tn-bg-red tn-color-white tn-margin-left-sm"
                         style="padding: 10rpx 20rpx;"
@@ -31,18 +28,19 @@
                 </block>
               </view>
               <view
-                class="tn-padding-right tn-padding-top-xs tn-padding-left-sm tn-text-ellipsis tn-text-sm"
-                @click="goTo('/pages/score/score-log')">
-                <text class="tn-color-gray">积分: {{ userInfo ? userInfo.info.score : 0 }}分</text>
-                <text class="tn-color-blue--disabled tn-padding-left-xs tn-icon-share-square"></text>
+                class="tn-padding-right tn-padding-top-xs tn-padding-left-sm tn-text-ellipsis score-row"
+                @click="goTo('/pages/score/score-log') "
+              >
+                <text class="score-text">积分: {{ userInfo ? userInfo.info.score : 0 }}分</text>
+                <text class="score-icon tn-padding-left-xs tn-icon-share-square"></text>
               </view>
             </view>
 
           </view>
         </view>
-        <view class="justify-content-item" @click="goTo('/pages/user/set')">
-          <view class="tn-icon-install tn-color-gray" style="font-size: 50rpx;opacity: 0.5;">
-          </view>
+        <view class="justify-content-item settings-entry" @click="goTo('/pages/user/set')">
+          <view class="tn-icon-install settings-icon"></view>
+          <view class="settings-text">设置</view>
         </view>
       </view>
 
@@ -57,46 +55,7 @@
         </view>
       </view>
 
-      <view class="tn-margin-top-xl">
-        <view class="button-number tn-flex tn-flex-row-between tn-flex-col-center tn-shadow-blur"
-              style="background: linear-gradient(-120deg, #3E445A, #31374A, #2B3042, #262B3C);">
-
-          <view class="tn-margin-left" @click="tn('/homePages/member')">
-            <view class="tn-flex tn-flex-col-center" style="color: #F1C68E;margin-top: -20rpx;">
-              <text class="tn-text-bold tn-text-xl">会员</text>
-              <text class="tn-icon-vip-text tn-text-center" style="font-size: 92rpx;"></text>
-            </view>
-            <view class="tn-color-white tn-text-sm">成为会员，享受更多权益</view>
-          </view>
-          <view class="tn-margin-right">
-            <tn-button shape="round" backgroundColor="#F1C68E" fontColor="#634738" padding="10rpx 0"
-                       width="160rpx" shadow @click="goTo('member-center')">
-              <!-- <text class="tn-icon-vip tn-padding-right-sm tn-text-lg"></text> -->
-              <text class="tn-text-bold">权 益</text>
-            </tn-button>
-          </view>
-
-          <view class="tnwave waveAnimation">
-            <view class="waveWrapperInner bgTop">
-              <view class="wave waveTop"
-                    :style="'background-image:url(' + imgHost + '/assets/addons/exam/img/wave/wave-2.png)'">
-              </view>
-            </view>
-            <view class="waveWrapperInner bgMiddle">
-              <view class="wave waveMiddle"
-                    :style="'background-image:url(' + imgHost + '/assets/addons/exam/img/wave/wave-2.png)'">
-              </view>
-            </view>
-            <view class="waveWrapperInner bgBottom">
-              <view class="wave waveBottom"
-                    :style="'background-image:url(' + imgHost + '/assets/addons/exam/img/wave/wave-1.png)'">
-              </view>
-            </view>
-          </view>
-
-        </view>
-      </view>
-
+      
 
       <!-- 更多信息-->
       <view class="about-shadow tn-margin-top-xl tn-padding-top-sm tn-padding-bottom-sm tn-bg-white">
@@ -110,7 +69,7 @@
                 <view class="tn-color-wallpaper tn-icon-ticket"></view>
               </view>
               <view class="tn-text-center" style="font-size: 28rpx;">
-                <text class="tn-text-ellipsis">我的错题</text>
+                <text class="tn-text-ellipsis">错题本</text>
               </view>
             </view>
           </view>
@@ -122,7 +81,7 @@
                 <view class="tn-color-wallpaper tn-icon-close-circle"></view>
               </view>
               <view class="tn-text-center" style="font-size: 28rpx;">
-                <text class="tn-text-ellipsis">题目收藏</text>
+                <text class="tn-text-ellipsis">收藏题目</text>
               </view>
             </view>
           </view>
@@ -134,7 +93,7 @@
                 <view class="tn-color-wallpaper tn-icon-ticket"></view>
               </view>
               <view class="tn-text-center" style="font-size: 28rpx;">
-                <text class="tn-text-ellipsis">考场报名</text>
+                <text class="tn-text-ellipsis">我的考试</text>
               </view>
             </view>
           </view>
@@ -153,9 +112,77 @@
         </view>
         <!-- 方式12 end-->
 
-        <!-- 方式12 start-->
-        <view class="tn-flex tn-flex-row-center tn-radius tn-padding-top">
-          <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/paper/grade')">
+        <!-- 方式12 start：考试成绩后新增功能 -->
+        <view class="tn-flex tn-flex-row-center tn-radius tn-padding-top" v-if="userInfo">
+          <!-- 我的档案（图标同原电子证书：tn-icon-honor） -->
+          <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/user/profile')">
+            <view class="tn-flex tn-flex-direction-column tn-flex-row-center tn-flex-col-center">
+              <view
+                class="icon12__item--icon tn-flex tn-flex-row-center tn-flex-col-center tn-bg-blue--light">
+                <view class="tn-color-wallpaper tn-icon-honor"></view>
+              </view>
+              <view class="tn-text-center" style="font-size: 28rpx;">
+                <text class="tn-text-ellipsis">我的档案</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 我的积分（图标同常用分类：tn-icon-star） -->
+          <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/score/score-log')">
+            <view class="tn-flex tn-flex-direction-column tn-flex-row-center tn-flex-col-center">
+              <view
+                class="icon12__item--icon tn-flex tn-flex-row-center tn-flex-col-center tn-bg-blue--light">
+                <view class="tn-color-wallpaper tn-icon-star"></view>
+              </view>
+              <view class="tn-text-center" style="font-size: 28rpx;">
+                <text class="tn-text-ellipsis">我的积分</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 积分统计（自定义图片图标，使用独立样式） -->
+          <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/score/score-stat')">
+            <view class="tn-flex tn-flex-direction-column tn-flex-row-center tn-flex-col-center">
+              <view
+                class="icon12-img-wrapper">
+                <image class="icon12-img-score" src="/static/img/tongji-2 1.png" mode="aspectFit"></image>
+              </view>
+              <view class="tn-text-center" style="font-size: 28rpx;">
+                <text class="tn-text-ellipsis">积分统计</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 电子证书（移动到我的考评前方，使用自定义图片图标，使用独立样式） -->
+          <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/cert/list')">
+            <view class="tn-flex tn-flex-direction-column tn-flex-row-center tn-flex-col-center">
+              <view
+                class="icon12-img-wrapper">
+                <image class="icon12-img-cert" src="/static/img/zhengshu-xiantiao 1.png" mode="aspectFit"></image>
+              </view>
+              <view class="tn-text-center" style="font-size: 28rpx;">
+                <text class="tn-text-ellipsis">电子证书</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        <!-- 方式12 end-->
+
+        <!-- 方式12 start：我的考评靠左放置 -->
+        <view class="tn-flex tn-flex-row-left tn-radius tn-padding-top">
+          <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/user/my-evaluation')" v-if="userInfo">
+            <view class="tn-flex tn-flex-direction-column tn-flex-row-center tn-flex-col-center">
+              <view
+                class="icon12__item--icon tn-flex tn-flex-row-center tn-flex-col-center tn-bg-blue--light">
+                <view class="tn-color-wallpaper tn-icon-menu-square-select"></view>
+              </view>
+              <view class="tn-text-center" style="font-size: 28rpx;">
+                <text class="tn-text-ellipsis">我的考评</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/paper/grade')">
             <view class="tn-flex tn-flex-direction-column tn-flex-row-center tn-flex-col-center">
               <view
                 class="icon12__item--icon tn-flex tn-flex-row-center tn-flex-col-center tn-bg-blue--light">
@@ -165,21 +192,9 @@
                 <text class="tn-text-ellipsis">考卷成绩</text>
               </view>
             </view>
-          </view>
+          </view> -->
 
-          <block v-if="userInfo">
-
-            <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/cert/list')">
-              <view class="tn-flex tn-flex-direction-column tn-flex-row-center tn-flex-col-center">
-                <view
-                  class="icon12__item--icon tn-flex tn-flex-row-center tn-flex-col-center tn-bg-blue--light">
-                  <view class="tn-color-wallpaper tn-icon-honor"></view>
-                </view>
-                <view class="tn-text-center" style="font-size: 28rpx;">
-                  <text class="tn-text-ellipsis">荣誉证书</text>
-                </view>
-              </view>
-            </view>
+          <!-- <block v-if="userInfo">
 
             <view class="tn-padding-sm tn-margin-xs tn-radius" @click="goTo('/pages/user/my-cate')">
               <view class="tn-flex tn-flex-direction-column tn-flex-row-center tn-flex-col-center">
@@ -204,10 +219,11 @@
                 </view>
               </view>
             </view>
-          </block>
+          </block> -->
         </view>
         <!-- 方式12 end-->
       </view>
+      
 
 
       <!-- 用户相关 -->
@@ -249,7 +265,7 @@
 
 
       <!-- 积分相关 -->
-      <view class="wallpaper-shadow tn-margin-top-lg tn-padding-top-sm tn-padding-bottom-sm" v-if="userInfo">
+      <!-- <view class="wallpaper-shadow tn-margin-top-lg tn-padding-top-sm tn-padding-bottom-sm" v-if="userInfo">
         <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30"
                       @click="goTo('/pages/score/score-log')">
           <view class="tn-flex tn-flex-col-center">
@@ -283,12 +299,12 @@
             <view class="tn-color-gray tn-icon-right"></view>
           </view>
         </tn-list-cell>
-      </view>
+      </view> -->
 
 
       <!-- 更多信息 -->
       <view class="wallpaper-shadow tn-margin-top-lg tn-margin-bottom-lg tn-padding-top-sm tn-padding-bottom-sm">
-        <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30"
+        <!-- <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30"
                       @click="goTo('/pages/user/profile')">
           <view class="tn-flex tn-flex-col-center">
             <view class="icon1__item--icon tn-flex tn-flex-row-center tn-flex-col-center"
@@ -298,9 +314,9 @@
             <view class="tn-margin-left-sm tn-flex-1">我的档案</view>
             <view class="tn-color-gray tn-icon-right"></view>
           </view>
-        </tn-list-cell>
+        </tn-list-cell> -->
         
-        <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30"
+        <!-- <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30"
                       @click="goTo('member-protocol')">
           <view class="tn-flex tn-flex-col-center">
             <view class="icon1__item--icon tn-flex tn-flex-row-center tn-flex-col-center"
@@ -312,8 +328,8 @@
               class="tn-margin-left-sm tn-color-wallpaper tn-text-sm tn-padding-left-xs tn-padding-right-xs tn-bg-gray--light tn-round">
             </view>
           </view>
-        </tn-list-cell>
-
+        </tn-list-cell> -->
+<!-- 
         <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30" @click="clickFollow()"
                       v-show="showFollowBtn">
           <view class="tn-flex tn-flex-col-center">
@@ -326,10 +342,10 @@
               class="tn-margin-left-sm tn-color-wallpaper tn-text-sm tn-padding-left-xs tn-padding-right-xs tn-bg-gray--light tn-round">
             </view>
           </view>
-        </tn-list-cell>
+        </tn-list-cell> -->
 
         <!-- #ifdef MP-WEIXIN -->
-        <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30">
+        <!-- <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30">
           <button class="tn-flex tn-flex-col-center tn-button--clear-style" open-type="contact">
             <view class="icon1__item--icon tn-flex tn-flex-row-center tn-flex-col-center"
                   style="color: #7C8191;">
@@ -340,18 +356,32 @@
               <view class="tn-color-gray tn-icon-right"></view>
             </view>
           </button>
-        </tn-list-cell>
+        </tn-list-cell> -->
         <!-- #endif -->
+
+        <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30"
+                      @click="goTo('/pages/user/privacy')">
+          <view class="tn-flex tn-flex-col-center">
+            <view class="icon1__item--icon tn-flex tn-flex-row-center tn-flex-col-center"
+                  style="color: #7C8191;">
+              <image class="list-row-icon-img" src="/static/img/dizhi-3 1.png" mode="aspectFit"></image>
+            </view>
+            <view class="tn-margin-left-sm tn-flex-1">隐私协议</view>
+            <view class="tn-margin-left-sm">
+              <text class="tn-icon-right list-row-arrow"></text>
+            </view>
+          </view>
+        </tn-list-cell>
 
         <tn-list-cell :hover="true" :unlined="true" :radius="true" :fontSize="30" @click="clearStorage()">
           <view class="tn-flex tn-flex-col-center">
             <view class="icon1__item--icon tn-flex tn-flex-row-center tn-flex-col-center"
                   style="color: #7C8191;">
-              <view class="tn-icon-delete-fill"></view>
+              <image class="list-row-icon-img" src="/static/img/tuichu-2 2.png" mode="aspectFit"></image>
             </view>
             <view class="tn-margin-left-sm tn-flex-1">退出登录</view>
-            <view
-              class="tn-margin-left-sm tn-color-wallpaper tn-text-sm tn-padding-left-xs tn-padding-right-xs tn-bg-gray--light tn-round">
+            <view class="tn-margin-left-sm">
+              <text class="tn-icon-right list-row-arrow"></text>
             </view>
           </view>
         </tn-list-cell>
@@ -591,6 +621,54 @@ export default {
   color: #1D2541;
 }
 
+.score-row {
+  color: #ffffff;
+  font-size: 30rpx;
+  line-height: 1.2;
+}
+
+.score-text {
+  color: #ffffff;
+  font-size: 30rpx;
+}
+
+.score-icon {
+  color: #ffffff;
+  font-size: 32rpx;
+}
+
+.settings-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-icon {
+  font-size: 70rpx;
+  opacity: 0.9;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.settings-text {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.list-row-icon-img {
+  width: 44rpx;
+  height: 44rpx;
+  display: block;
+}
+
+.list-row-arrow {
+  font-size: 28rpx;
+  color: #D2D2D2;
+}
+
 
 /* 自定义导航栏内容 start */
 .custom-nav {
@@ -608,19 +686,13 @@ export default {
 
 /* 自定义导航栏内容 end */
 
-/* 顶部背景图 start */
+/* 顶部背景（改为与多彩1相同的纯蓝顶） */
 .top-backgroup {
-  height: 450rpx;
+  height: 300rpx;
   z-index: -1;
-
-  .backgroud-image {
-    width: 100%;
-    height: 450rpx;
-    z-index: -1;
-  }
+  background: linear-gradient(90deg, #44A6FF 0%, #5975FF 100%);
+  border-radius: 0 0 10% 10%;
 }
-
-/* 顶部背景图 end */
 
 
 /* 图标容器5 start */
@@ -753,6 +825,24 @@ export default {
       }
     }
   }
+}
+
+.icon12-img-wrapper {
+  width: 60rpx;
+  height: 15rpx;
+  font-size: 50rpx;
+  border-radius: 50%;
+  margin-bottom: 53rpx;
+  position: relative;
+  z-index: 1;
+  margin-top:-18rpx
+}
+
+.icon12-img-score,
+.icon12-img-cert {
+  width: 50rpx;
+  height: 50rpx;
+  display: block;
 }
 
 /* 图标容器1 start */

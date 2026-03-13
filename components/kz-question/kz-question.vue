@@ -3,7 +3,7 @@
 
     <!-- 头部信息 -->
     <view class="test-header" v-if="showCountDown">
-      <tui-countdown :time="limit_time" borderColor="#FFF" color="#080808" :size="36" :colonSize="36"
+      <tui-countdown :time="limit_time" borderColor="#FFF" color="#5677FCFC" :size="36" :colonSize="36"
                      @end="endOfTime"></tui-countdown>
     </view>
 
@@ -245,19 +245,26 @@
               <view v-else-if="item.kind === 'SHORT'">
                 <view class="test-main">
                   <view class="test-title">
-                    <mp-html :content="item.title" style="font-size: 36rpx; font-weight: bold;"></mp-html>
+                    <mp-html :content="item.title" style="font-size: 32rpx; font-weight: 600rpx;"></mp-html>
                     <!-- <rich-text :nodes="questionTitle(swiperIndex, item)"
                                style="font-size: 36rpx; font-weight: bold;"></rich-text> -->
                   </view>
                   <view class="test-cont">
                     <!-- 答案输入框 -->
-                    <textarea placeholder="在此输入答案" class="short-input"
-                              :maxlength="-1"
-                              :value="setShortInputValue(swiperIndex)"
-                              :auto-blur="true"
-                              @blur="(e) => changeShortInput(e, swiperIndex)"
-                              @input="(e) => changeShortInput(e, swiperIndex)"
+                    <textarea
+                      placeholder="在此输入答案..."
+                      class="short-input"
+                      :maxlength="-1"
+                      :value="setShortInputValue(swiperIndex)"
+                      :auto-blur="true"
+                      @blur="(e) => changeShortInput(e, swiperIndex)"
+                      @input="(e) => changeShortInput(e, swiperIndex)"
                     />
+
+                    <!-- 输入提示 -->
+                    <view class="short-input-tip">
+                      提示：如有多个空，请用空格或逗号分隔
+                    </view>
 
                     <!-- 确认答案按钮 -->
                     <view class="btn-confirm" v-if="mode == 'TRAINING'">
@@ -308,9 +315,31 @@
                           <view class="text-right-answer-val-item" v-for="(keyword, keywordIndex) in item.answer.config" :key="keywordIndex">
                             <view :class="[keyword.class]">
                               关键词{{ keywordIndex + 1 }}：{{ keyword.answer }}({{ keyword.score }}分)
-                            </view>
-                          </view>
-                        </view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+
+              <!-- 语音题 -->
+              <view v-if="item.kind === 'VOICE'">
+                <view class="test-main">
+                  <view class="test-title">
+                    <mp-html :content="item.title" style="font-size: 32rpx; font-weight: 600rpx;"></mp-html>
+                  </view>
+                  <view class="test-cont">
+                    <view class="voice-card">
+                      <view class="voice-time">
+                        {{ item.voice_duration || '0:00' }}
+                      </view>
+                      <view class="voice-record-btn" @click="handleVoiceRecord(item, index)">
+                        <text class="cuIcon-voicefill voice-icon"></text>
+                      </view>
+                      <view class="voice-tip">
+                        点击开始录音
+                      </view>
+                    </view>
+                  </view>
+                </view>
                       </view>
                     </view>
 
@@ -424,13 +453,15 @@
       <view class="cu-dialog tibiao" @click.stop>
         <scroll-view scroll-y="true" class="tibiao-scroll">
           <view class="tibiao-scroll-list">
-            <!-- class="tibiao-item" -->
-            <!-- :class="[getNumberPanelClass(index)]" -->
-            <!-- :class="swiperIndex - 1 == index ? 'selected' : (list[index] && (list[index].check || list[index].user_answers) ? 'right' : '')" -->
             <view
               :class="['tibiao-item', getNumberPanelClass(index)]"
-              v-for="(item, index) in total" :key="index" @click="changeQuestion(index)">
-              {{ index + 1 }}
+              v-for="(item, index) in total"
+              :key="index"
+              @click="changeQuestion(index)"
+            >
+              <text>{{ index + 1 }}</text>
+              <text v-if="isNumberAnswered(index)" class="tibiao-label">已答</text>
+              <text v-else-if="isNumberSkippedUnanswered(index)" class="tibiao-label tibiao-label-unanswered">未答</text>
             </view>
           </view>
         </scroll-view>
@@ -913,7 +944,37 @@ export default {
           }
         }
 
+        if (this.isNumberSkippedUnanswered(index)) {
+          return ['tibiao-unanswered']
+        }
+
         return classes
+      }
+    },
+    // 是否已作答，用于题标下方“已答”文案
+    isNumberAnswered () {
+      return (index) => {
+        const question = this.list[index]
+        return this.isQuestionAnswered(question)
+      }
+    },
+    // 是否为跳题后的未答题（只在考试模式标红显示）
+    isNumberSkippedUnanswered () {
+      return (index) => {
+        if (this.mode !== 'EXAM') return false
+        if (this.swiperIndex - 1 === index) return false
+
+        const question = this.list[index]
+        if (!question || !question.kind) return false
+        if (this.isQuestionAnswered(question)) return false
+
+        for (let i = index + 1; i < this.list.length; i++) {
+          if (this.isQuestionAnswered(this.list[i])) {
+            return true
+          }
+        }
+
+        return false
       }
     },
     // 获取错题来源文本
@@ -930,6 +991,27 @@ export default {
     }
   },
   methods: {
+    // 语音题录音占位方法（后续接入真实录音逻辑）
+    handleVoiceRecord (item, index) {
+      // TODO: 调用 uni 录音 API，并更新题目录音时长等信息
+      console.log('start voice record for question', index, item && item.id)
+    },
+    // 判断该题是否已答
+    isQuestionAnswered (question) {
+      if (!question || !question.kind) return false
+
+      switch (question.kind) {
+        case 'JUDGE':
+        case 'SINGLE':
+        case 'MULTI':
+          return !!(question.check || question.is_right)
+        case 'FILL':
+        case 'SHORT':
+          return !!question.user_answers
+        default:
+          return false
+      }
+    },
     // 初始化模式配置
     initMode (reset = false) {
       switch (this.mode) {
@@ -2031,6 +2113,7 @@ page {
             margin-bottom: 30rpx;
             border: 1rpx solid #d0d0d0;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             margin-right: 45rpx;
@@ -2038,19 +2121,37 @@ page {
             &:nth-child(5n) {
               margin-right: 0;
             }
+            // 已作答（或答对）
 
             &.tibiao-right {
               background: #4caf50;
               color: #fff;
             }
+            // 该题被判错
 
             &.tibiao-error {
               background: #ff4400;
               color: #fff;
             }
+            // 正在浏览/作答的题
 
             &.selected {
               background: #5677fc;
+              color: #fff;
+            }
+
+            &.tibiao-unanswered {
+              background: #FC5555;
+              color: #fff;
+            }
+
+            .tibiao-label {
+              margin-top: 6rpx;
+              font-size: 20rpx;
+              color: inherit;
+            }
+
+            .tibiao-label-unanswered {
               color: #fff;
             }
           }
@@ -2276,10 +2377,12 @@ page {
 /** 简答题输入框 */
 .short-input {
   border: 0px;
-  border-bottom: 2px solid #5677fc;
   width: 100%;
-  min-height: 500rpx;
+  min-height: 300rpx;
   margin: 10rpx;
+  border:1rpx solid #D1D5DC;
+  border-radius: 20rpx;
+  padding: 20rpx;
 }
 
 .short-input-right {
@@ -2288,6 +2391,54 @@ page {
 
 .short-input-error {
   color: #ff4400;
+}
+
+/* 简答题输入提示文案 */
+.short-input-tip {
+  margin: 10rpx 10rpx 0;
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 语音题录音卡片 */
+.voice-card {
+  margin-top: 20rpx;
+  border-radius: 20rpx;
+  border: 1rpx solid #d1d5dc;
+  background-color: #ffffff;
+  padding: 50rpx 20rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.voice-time {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 40rpx;
+}
+
+.voice-record-btn {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background-color: #2f82ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 16rpx rgba(47, 130, 255, 0.4);
+  margin-bottom: 26rpx;
+}
+
+.voice-icon {
+  font-size: 60rpx;
+  color: #ffffff;
+}
+
+.voice-tip {
+  font-size: 26rpx;
+  color: #999999;
 }
 
 .material-title {

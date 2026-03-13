@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
-		<!-- 顶部导航 -->
-		<!-- <topbar :title="paper_name" :scrollTop="scrollTop"></topbar> -->
+		<!-- 自定义顶部导航栏 -->
+		<topbar :title="paper_name" @back="goBack" />
 
 		<!-- <tui-navigation-bar splitLine @init="initNavigation" @change="opacityChange" :scrollTop="scrollTop" title="NavBar自定义导航栏" backgroundColor="#fff" color="#333">
       <view class="tui-header-icon" :style="{ marginTop: top + 'px' }"><tui-icon name="arrowleft" :color="opacity > 0.85 ? '#333' : '#fff'" @click="back"></tui-icon></view>
@@ -86,8 +86,10 @@
 <script>
 	import paperApi from "@/common/api/paper.js"
 	import cateApi from "@/common/api/cate.js"
+	import Topbar from "@/components/topbar/topbar.vue";
 
 	export default {
+		components: { Topbar },
 		data() {
 			return {
 				// 顶部栏
@@ -540,7 +542,8 @@
 	}
 
 	.container {
-		padding-bottom: 120rpx;
+		padding-top: calc(130rpx + var(--status-bar-height));
+		padding-bottom: 20rpx;
 		box-sizing: border-box;
 	}
 

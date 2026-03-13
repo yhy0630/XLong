@@ -1,5 +1,6 @@
 <template>
-	<view>
+	<view class="wrong-page">
+		<topbar title="错题本"></topbar>
 		<!-- 答题组件 -->
 		<kz-question mode="VIEW" pageType="WRONG" title="我的错题" :questions="list" v-show="!showNodata" :canDeleteWrong="true" v-on:refresh="refresh"></kz-question>
 		
@@ -11,7 +12,11 @@
 </template>
 
 <script>
+	import topbar from "@/components/topbar/topbar.vue"
 	export default {
+		components: {
+			topbar
+		},
 		data() {
 			return {
 				list: [],
@@ -66,6 +71,8 @@
 	}
 </script>
 
-<style>
-
+<style scoped>
+.wrong-page {
+	padding-top: 160rpx;
+}
 </style>
